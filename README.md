@@ -10,3 +10,7 @@ Sistema de reserva e controle de veículos compartilhados para empresas (corpora
 - `.claude/skills/`: skills do projeto para o Claude Code
 
 Desenvolvimento: `cd app && cp .env.example .env.local && npm install && npm run dev`.
+
+## Graphify (grafo de conhecimento do código)
+
+Skill `/graphify` instalada no projeto. Em outra máquina, instale a CLI uma vez: `uv tool install graphifyy`. Depois, no Claude Code, rode `/graphify .` para gerar o grafo em `graphify-out/`.
