@@ -1,8 +1,20 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './auth/AuthProvider'
+import { RotaProtegida } from './auth/RotaProtegida'
+import Entrar from './pages/Entrar'
+import MeuPerfil from './pages/MeuPerfil'
+
 export default function App() {
   return (
-    <main style={{ padding: 16 }}>
-      <h1>Car Pool Corporativo</h1>
-      <p>Fundação pronta. Próximo passo: modelo de dados e login.</p>
-    </main>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/entrar" element={<Entrar />} />
+          <Route element={<RotaProtegida />}>
+            <Route path="/" element={<MeuPerfil />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }

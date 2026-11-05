@@ -42,13 +42,13 @@ Cada sprint termina com uma demonstração e com testes automatizados passando. 
 ### Sprint 1 · Fundação de dados e login
 *Skills: `supabase`, `supabase-postgres-best-practices`, `carpool-dominio`.*
 
-- [ ] CI no GitHub Actions: lint, tipos, build e testes do app.
-- [ ] Estrutura `supabase/` (config, migrations, tests) e script para aplicar do zero.
-- [ ] Migration 001: `empresas`, `unidades`, `bases`, `vagas`, `membros` (perfil: motorista, solicitante, aprovador, gestor_base, gestor_frota, financeiro, admin), função auxiliar de empresa e RLS em tudo.
-- [ ] Migration 002: `registro_de_auditoria` (append-only) e triggers de auditoria nas tabelas de cadastro.
-- [ ] Login por e-mail e senha no app, rota protegida, tela "meu perfil" lendo `membros`.
-- [ ] Seed de desenvolvimento com **duas empresas** e um usuário de cada perfil.
-- [ ] Testes de banco: usuário da empresa A não lê, não altera e não insere na empresa B em **cada** tabela; auditoria não aceita update/delete.
+- [x] CI no GitHub Actions: lint, tipos, build e testes do app.
+- [x] Estrutura `supabase/` (config, migrations, tests) e script para aplicar do zero.
+- [x] Migration 001: `empresas`, `unidades`, `bases`, `vagas`, `membros` (perfil: motorista, solicitante, aprovador, gestor_base, gestor_frota, financeiro, admin), função auxiliar de empresa e RLS em tudo.
+- [x] Migration 002: `registro_de_auditoria` (append-only) e triggers de auditoria nas tabelas de cadastro.
+- [x] Login por e-mail e senha no app, rota protegida, tela "meu perfil" lendo `membros`.
+- [x] Seed de desenvolvimento com **duas empresas** e um usuário de cada perfil.
+- [x] Testes de banco: usuário da empresa A não lê, não altera e não insere na empresa B em **cada** tabela; auditoria não aceita update/delete.
 
 **Pronto quando:** login funciona, o app lê só os dados da empresa do usuário, e os testes de isolamento passam no CI.
 
