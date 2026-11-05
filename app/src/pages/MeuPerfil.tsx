@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { supabase } from '../lib/supabase'
 import { rotuloPerfil } from '../lib/perfis'
@@ -33,6 +34,7 @@ export default function MeuPerfil() {
           <li key={v.id}>{v.nome} · {rotuloPerfil(v.perfil)} · {v.empresas?.nome}</li>
         ))}
       </ul>
+      <p><Link to="/reservar">Reservar veículo</Link> · <Link to="/frota">Frota</Link></p>
       <button onClick={() => supabase.auth.signOut()}>Sair</button>
     </main>
   )

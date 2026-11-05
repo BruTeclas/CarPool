@@ -1,0 +1,23 @@
+const MENSAGENS: Record<string, string> = {
+  conflito_agenda: 'Esse veículo já está reservado (ou em intervalo técnico) nesse horário.',
+  antecedencia_minima_nao_respeitada: 'A reserva precisa ser feita com mais antecedência.',
+  antecedencia_maxima_excedida: 'A data está além do limite de antecedência permitido.',
+  duracao_maxima_excedida: 'A reserva ultrapassa a duração máxima permitida.',
+  periodo_invalido: 'O fim precisa ser depois do início.',
+  cnh_nao_cadastrada: 'Sua CNH não está cadastrada. Procure o gestor da frota.',
+  cnh_vencida: 'Sua CNH vence antes do fim da reserva.',
+  cnh_categoria_incompativel: 'Sua categoria de CNH não permite dirigir esse veículo.',
+  politica_nao_aceita: 'Você precisa aceitar a política de uso da frota antes de reservar.',
+  limite_semanal_excedido: 'Você atingiu o limite semanal de horas de uso.',
+  veiculo_indisponivel: 'Esse veículo não está disponível para reserva.',
+  veiculo_nao_encontrado: 'Veículo não encontrado.',
+  nao_autenticado: 'Sua sessão expirou. Entre novamente.',
+}
+
+export function mensagemDeErro(erro: { message?: string } | null | undefined): string {
+  const bruto = erro?.message ?? ''
+  const codigo = Object.keys(MENSAGENS).find((c) => bruto.includes(c))
+  if (codigo) return MENSAGENS[codigo]
+  if (bruto.startsWith('transicao_nao_permitida')) return 'Essa ação não é permitida para a reserva nesse estado.'
+  return 'Não foi possível concluir. Tente novamente.'
+}

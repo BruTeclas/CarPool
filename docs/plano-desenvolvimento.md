@@ -55,12 +55,12 @@ Cada sprint termina com uma demonstração e com testes automatizados passando. 
 ### Sprint 2 · Cadastros, políticas e núcleo da reserva
 *Skills: `supabase-postgres-best-practices`, `carpool-reserva`, `carpool-dominio`.*
 
-- [ ] Migration 003: `categorias`, `veiculos`, `usuarios_condutores` com `cnhs` (número, categoria, validade, revalidação), `grupos`, `politicas` versionadas, `aceites_de_politica`.
-- [ ] Migration 004: `reservas` (inclui `bloqueio_fim`), `eventos_da_reserva`, `aprovacoes`, restrição `EXCLUDE` corrigida, índices nas chaves estrangeiras e nas buscas de agenda.
-- [ ] Função `transicionar_reserva` com as transições do estudo e as validações de CNH, antecedência, duração, intervalo técnico e limite semanal.
-- [ ] Função de disponibilidade (veículos livres em um período, por categoria, escolhendo a placa pelo critério de desgaste).
-- [ ] Portal do gestor: CRUD de veículos, bases, vagas, usuários, CNH e grupos.
-- [ ] Testes: duas transações reservando o mesmo carro ao mesmo tempo (uma falha); intervalo técnico respeitado; CNH vencida bloqueia; evento sempre gravado; update direto em `reservas` negado.
+- [x] Migration 003: `categorias`, `veiculos`, `usuarios_condutores` com `cnhs` (número, categoria, validade, revalidação), `grupos`, `politicas` versionadas, `aceites_de_politica`.
+- [x] Migration 004: `reservas` (inclui `bloqueio_fim`), `eventos_da_reserva`, `aprovacoes`, restrição `EXCLUDE` corrigida, índices nas chaves estrangeiras e nas buscas de agenda.
+- [x] Função `transicionar_reserva` com as transições do estudo e as validações de CNH, antecedência, duração, intervalo técnico e limite semanal.
+- [x] Função de disponibilidade (veículos livres em um período, por categoria, escolhendo a placa pelo critério de desgaste).
+- [~] Portal do gestor: **só veículos feito** (listar e cadastrar). Faltam bases, vagas, usuários, CNH, grupos e políticas na interface; hoje entram por seed/SQL.
+- [x] Testes: duas transações reservando o mesmo carro ao mesmo tempo (uma falha); intervalo técnico respeitado; CNH vencida bloqueia; evento sempre gravado; update direto em `reservas` negado.
 
 **Pronto quando:** o gestor cadastra uma frota completa e o banco recusa qualquer reserva conflitante, mesmo em concorrência.
 
