@@ -10,7 +10,7 @@ Base: `estudo-funcional.md`. Meta do MVP: piloto pago com 15 a 40 carros, 90% da
 | Backend | Supabase: Postgres, Auth, Storage, Edge Functions | Já definido no estudo; RLS dá o isolamento por empresa |
 | Regras críticas | Funções SQL e Edge Functions; o cliente nunca muda o estado da reserva sozinho | A máquina de estados fica no servidor |
 | Projeto Supabase | **Próprio do CarPool** | Dados de CNH e fotos exigem banco isolado de qualquer outro produto |
-| Repositório | `BruTeclas/CarPool`, totalmente separado do NFCliente (código, banco, domínio e hospedagem) | Projeto novo, sem nenhuma relação com o site de chaveiros |
+| Repositório | `BruTeclas/CarPool`, com código, banco, domínio e hospedagem próprios | Projeto independente de qualquer outro produto |
 
 ## Estrutura de pastas prevista
 
