@@ -4,6 +4,7 @@ Sistema de reserva e controle de veículos compartilhados para empresas (corpora
 
 - `docs/estudo-funcional.md`: estudo funcional e de produto
 - `docs/plano-mvp.md`: plano de construção do MVP
+- `docs/plano-desenvolvimento.md`: plano de desenvolvimento por sprints
 - `app/`: PWA em React + TypeScript + Vite
 - `supabase/`: migrations e funções (a partir da Etapa 1)
 - `.claude/skills/`: skills do projeto para o Claude Code

@@ -48,7 +48,7 @@ ALTER TABLE reservas ADD CONSTRAINT sem_sobreposicao
   ) WHERE (status IN ('aprovada','liberada','em_uso','atrasada'));
 ```
 
-Observação: `fim + intervalo_tecnico` em expressão de índice exige que `intervalo_tecnico` seja coluna da própria tabela (e a expressão seja IMMUTABLE). Se for configurável por política, copiar o valor para a reserva no momento da criação.
+Atenção: com `timestamptz`, `fim + intervalo_tecnico` é `STABLE`, não `IMMUTABLE`, e o Postgres recusa a expressão no `EXCLUDE`. Use uma coluna `bloqueio_fim timestamptz`, preenchida por trigger `BEFORE INSERT/UPDATE` com `fim + intervalo_tecnico` (intervalo vindo da política), e faça a restrição sobre `tstzrange(inicio, bloqueio_fim)`. Valide com teste de concorrência.
 
 ## Regras de engenharia
 
