@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Veiculo } from '../components/Placa'
 import { formatarDataHora } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
@@ -67,8 +68,9 @@ export default function Conferencia() {
       {devolucoes.length === 0 && <p>Nenhuma devolução pendente.</p>}
       {devolucoes.map((d) => (
         <section key={d.id} className="cartao" aria-label={`Devolução ${d.veiculos?.placa}`}>
-          <h3>{d.veiculos?.placa} · {d.veiculos?.modelo} · {nome(d.motorista_id)}</h3>
-          <p>Devolução prevista: {formatarDataHora(d.fim)} · <Link to={`/reservas/${d.id}`}>abrir reserva</Link></p>
+          <h3><Veiculo placa={d.veiculos?.placa} modelo={d.veiculos?.modelo} /></h3>
+          <p>Motorista: {nome(d.motorista_id)}</p>
+          <p>Devolução prevista: {formatarDataHora(d.fim)}. <Link to={`/reservas/${d.id}`}>Abrir reserva</Link></p>
           <ul>
             {avarias.filter((a) => a.reserva_id === d.id).map((a) => <li key={a.id}>{a.descricao}</li>)}
           </ul>
@@ -78,7 +80,7 @@ export default function Conferencia() {
               return url ? (
                 <figure key={`${p.id}-${t}`}>
                   <a href={url} target="_blank" rel="noreferrer"><img src={url} alt={`${p.rotulo}, ${t === 'saida' ? 'saída' : 'chegada'}`} loading="lazy" /></a>
-                  <figcaption>{p.rotulo} · {t === 'saida' ? 'saída' : 'chegada'}</figcaption>
+                  <figcaption>{p.rotulo}, {t === 'saida' ? 'saída' : 'chegada'}</figcaption>
                 </figure>
               ) : null
             }))}
@@ -97,7 +99,7 @@ export default function Conferencia() {
         <ul>
           {avarias.map((a) => (
             <li key={a.id} className="acoes" style={{ marginBottom: 8 }}>
-              <span>{a.veiculos?.placa} · {a.descricao} · {formatarDataHora(a.criado_em)}</span>
+              <span><Veiculo placa={a.veiculos?.placa} modelo={a.descricao} /> <small>{formatarDataHora(a.criado_em)}</small></span>
               {podeGerir && (
                 <button type="button" className="secundario"
                   onClick={() => agir(supabase.from('avarias').update({ status: 'resolvida' }).eq('id', a.id), 'Avaria marcada como resolvida.')}>
@@ -115,7 +117,7 @@ export default function Conferencia() {
         <ul>
           {ordens.map((o) => (
             <li key={o.id} className="acoes" style={{ marginBottom: 8 }}>
-              <span>{o.veiculos?.placa} {o.veiculos?.modelo} · {o.descricao}</span>
+              <span><Veiculo placa={o.veiculos?.placa} modelo={o.veiculos?.modelo} /> {o.descricao}</span>
               {podeGerir && (
                 <button type="button" onClick={() => agir(supabase.rpc('concluir_ordem', { p_ordem: o.id }), 'Manutenção concluída. Veículo liberado.')}>
                   Concluir e liberar veículo

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Veiculo } from '../components/Placa'
 import { formatarDataHora } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
@@ -52,9 +53,10 @@ export default function Aprovacoes() {
       {pedidos?.length === 0 && <p>Nenhuma reserva aguardando aprovação.</p>}
       {pedidos?.map((p) => (
         <section key={p.id} className="cartao" aria-label={`Pedido de ${nome(p.motorista_id)}`}>
-          <h2>{nome(p.motorista_id)} · {p.veiculos?.placa} {p.veiculos?.modelo}</h2>
+          <h2>{nome(p.motorista_id)}</h2>
+          <p><Veiculo placa={p.veiculos?.placa} modelo={p.veiculos?.modelo} /></p>
           <p>{formatarDataHora(p.inicio)} até {formatarDataHora(p.fim)}</p>
-          {(p.finalidade || p.destino) && <p>{[p.finalidade, p.destino].filter(Boolean).join(' · ')}</p>}
+          {(p.finalidade || p.destino) && <p>{[p.finalidade, p.destino].filter(Boolean).join(', ')}</p>}
           <label>Justificativa (obrigatória para recusar)
             <input value={justificativas[p.id] ?? ''} onChange={(e) => setJustificativas({ ...justificativas, [p.id]: e.target.value })} />
           </label>

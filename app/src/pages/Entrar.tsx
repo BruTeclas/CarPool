@@ -29,9 +29,19 @@ export default function Entrar() {
   }
 
   return (
-    <main style={{ maxWidth: 380 }}>
+    <div className="entrada">
+      <aside className="entrada-lado">
+        <span className="marca">Car Pool</span>
+        <div>
+          <p>Reserve, retire e devolva os veículos da empresa. Tudo fica registrado: quem pegou, quando e em que estado voltou.</p>
+          <div className="vagas" aria-hidden="true">
+            <span /><span className="ocupada"><span className="placa">BRA 2E19</span></span><span /><span />
+          </div>
+        </div>
+      </aside>
+      <main className="entrada-form">
       <h1>Entrar</h1>
-      <form onSubmit={entrar} style={{ display: 'grid', gap: 12 }}>
+      <form onSubmit={entrar}>
         <label>
           E-mail
           <input type="email" autoComplete="email" required value={email}
@@ -45,6 +55,7 @@ export default function Entrar() {
         {erro && <p role="alert" className="erro">{erro}</p>}
         <button type="submit" disabled={enviando}>{enviando ? 'Entrando…' : 'Entrar'}</button>
       </form>
-    </main>
+      </main>
+    </div>
   )
 }

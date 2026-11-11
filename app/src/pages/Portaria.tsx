@@ -5,7 +5,8 @@ import { formatarDataHora } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
 import { useOpcoes } from '../lib/opcoes'
-import { rotuloStatus } from '../lib/status'
+import { Veiculo } from '../components/Placa'
+import { Situacao } from '../components/Situacao'
 import { supabase } from '../lib/supabase'
 
 type Reserva = {
@@ -74,7 +75,9 @@ export default function Portaria() {
         {mensagem && <p role={mensagem.erro ? 'alert' : 'status'} className={mensagem.erro ? 'erro' : 'sucesso'}>{mensagem.texto}</p>}
         {achada && (
           <div className="aviso" style={{ marginTop: 12 }}>
-            <p><strong>{nome(achada.motorista_id)}</strong> · {achada.veiculos?.placa} {achada.veiculos?.modelo}<br />
+            <p><strong>{nome(achada.motorista_id)}</strong></p>
+            <p><Veiculo placa={achada.veiculos?.placa} modelo={achada.veiculos?.modelo} /></p>
+            <p>
               {formatarDataHora(achada.inicio)} até {formatarDataHora(achada.fim)}</p>
             <p>Confira o documento da pessoa antes de entregar.</p>
             <button type="button" onClick={entregar}>Confirmar entrega da chave</button>
@@ -90,9 +93,9 @@ export default function Portaria() {
               {agenda.length === 0 && <tr><td colSpan={6} className="vazio">Nenhum movimento.</td></tr>}
               {agenda.map((r) => (
                 <tr key={r.id}>
-                  <td>{r.veiculos?.placa} · {r.veiculos?.modelo}</td><td>{nome(r.motorista_id)}</td>
+                  <td><Veiculo placa={r.veiculos?.placa} modelo={r.veiculos?.modelo} /></td><td>{nome(r.motorista_id)}</td>
                   <td>{formatarDataHora(r.inicio)}</td><td>{formatarDataHora(r.fim)}</td>
-                  <td>{rotuloStatus(r.status)}</td>
+                  <td><Situacao status={r.status} /></td>
                   <td className="acoes"><Link to={`/reservas/${r.id}`}>Abrir</Link></td>
                 </tr>
               ))}

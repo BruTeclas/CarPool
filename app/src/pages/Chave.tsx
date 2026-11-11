@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { Veiculo } from '../components/Placa'
 import { formatarDataHora } from '../lib/datas'
 import { supabase } from '../lib/supabase'
 
@@ -31,7 +32,7 @@ export default function Chave() {
     })
   }, [carregando, session, codigo])
 
-  const carro = leitura?.placa ? `${leitura.placa} · ${leitura.modelo}` : ''
+  const carro = leitura?.placa ? <Veiculo placa={leitura.placa} modelo={leitura.modelo} /> : null
 
   function conteudo() {
     if (!session) {

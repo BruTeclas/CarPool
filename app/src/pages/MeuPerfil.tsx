@@ -25,7 +25,7 @@ export default function MeuPerfil() {
       <h1>Meu perfil</h1>
       <section className="cartao">
         <p><strong>{session?.user.email}</strong></p>
-        <p>{empresaNome}{perfis.length > 0 && ` · ${perfis.map(rotuloPerfil).join(', ')}`}</p>
+        <p>{empresaNome}{perfis.length > 0 && `, como ${perfis.map(rotuloPerfil).join(', ').toLowerCase()}`}</p>
       </section>
       <section className="cartao" aria-label="Trocar senha">
         <h2>Trocar senha</h2>

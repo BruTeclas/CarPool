@@ -4,6 +4,7 @@ import { useEmpresa } from '../lib/empresa'
 import { mensagemDeCadastro } from '../lib/erros-banco'
 import type { Opcao } from '../lib/opcoes'
 import { supabase } from '../lib/supabase'
+import { Placa } from './Placa'
 
 export type Campo = {
   nome: string
@@ -12,6 +13,7 @@ export type Campo = {
   opcoes?: Opcao[]
   obrigatorio?: boolean
   converter?: (valor: string) => unknown
+  placa?: boolean
 }
 
 type Linha = Record<string, unknown> & { id: string }
@@ -111,7 +113,7 @@ export function Crud({ titulo, tabela, campos, ordem, podeEditar, semCriar, semE
             )}
             {linhas.map((l) => (
               <tr key={l.id}>
-                {campos.map((c) => <td key={c.nome}>{exibir(c, l[c.nome])}</td>)}
+                {campos.map((c) => <td key={c.nome}>{c.placa ? <Placa valor={String(l[c.nome] ?? '')} /> : exibir(c, l[c.nome])}</td>)}
                 {podeEditar && (
                   <td className="acoes">
                     <button type="button" className="secundario" onClick={() => editar(l)}>Editar</button>

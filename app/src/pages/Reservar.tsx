@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { Veiculo } from '../components/Placa'
 import { formatarDataHora, paraCampo, paraInstante, sugestaoDeInicio } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
@@ -129,7 +130,7 @@ export default function Reservar() {
           <h2>Antes de reservar, leia e aceite a política de uso</h2>
           {pendentes.map((p) => (
             <div key={p.id}>
-              <p><strong>{p.nome}</strong> · versão {p.versao}</p>
+              <p><strong>{p.nome}</strong> (versão {p.versao})</p>
               <ul>{regras(p.config).map((r) => <li key={r}>{r}</li>)}</ul>
             </div>
           ))}
@@ -185,7 +186,7 @@ export default function Reservar() {
           <ul>
             {livres.map((l) => (
               <li key={l.veiculo_id} className="acoes" style={{ marginBottom: 8 }}>
-                <span>{l.placa} · {l.modelo}</span>
+                <Veiculo placa={l.placa} modelo={l.modelo} />
                 <button type="button" className="secundario" disabled={ocupado} onClick={() => reservar(l.veiculo_id)}>Reservar este</button>
               </li>
             ))}

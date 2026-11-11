@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { Veiculo } from '../components/Placa'
 import { mensagemDeErro } from '../lib/erros'
 import { enviarFoto, POSICOES_CHEGADA, POSICOES_SAIDA } from '../lib/fotos'
 import type { FotoEnviada } from '../lib/fotos'
@@ -103,7 +104,7 @@ export default function Vistoria() {
   return (
     <main style={{ maxWidth: 640 }}>
       <h1>Vistoria de {chegada ? 'chegada' : 'saída'}</h1>
-      <p>{reserva.veiculos?.placa} · {reserva.veiculos?.modelo}</p>
+      <p><Veiculo placa={reserva.veiculos?.placa} modelo={reserva.veiculos?.modelo} /></p>
       <form onSubmit={salvar}>
         <section className="cartao" aria-label="Checklist">
           <h2>Checklist</h2>

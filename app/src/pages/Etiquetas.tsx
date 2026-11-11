@@ -42,7 +42,7 @@ export default function Etiquetas() {
               <img src={e.qr} alt={`QR da chave do veículo ${e.veiculos?.placa}`} />
               <div>Chave {e.codigo.slice(-6).toUpperCase()}</div>
             </div>
-            <small>para: {e.veiculos?.placa} · {e.veiculos?.modelo}</small>
+            <small>para {e.veiculos?.placa}, {e.veiculos?.modelo}</small>
           </div>
         ))}
       </section>

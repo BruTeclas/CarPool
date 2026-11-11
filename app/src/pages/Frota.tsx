@@ -22,7 +22,7 @@ export default function Frota() {
       <h1>Frota</h1>
       <Crud titulo="Veículos" tabela="veiculos" ordem="placa" podeEditar={podeGerir} versao={versao}
         campos={[
-          { nome: 'placa', rotulo: 'Placa', obrigatorio: true, converter: (v) => v.toUpperCase().replace(/[^A-Z0-9]/g, '') },
+          { nome: 'placa', rotulo: 'Placa', obrigatorio: true, placa: true, converter: (v) => v.toUpperCase().replace(/[^A-Z0-9]/g, '') },
           { nome: 'modelo', rotulo: 'Modelo', obrigatorio: true },
           { nome: 'categoria_id', rotulo: 'Categoria', tipo: 'selecao', opcoes: categorias, obrigatorio: true },
           { nome: 'base_id', rotulo: 'Base', tipo: 'selecao', opcoes: bases, obrigatorio: true },

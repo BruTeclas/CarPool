@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { Veiculo } from '../components/Placa'
+import { Situacao } from '../components/Situacao'
 import { formatarDataHora } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
@@ -56,9 +58,9 @@ export default function ReservaDetalhe() {
   return (
     <main>
       <p><Link to="/reservas">← Minhas reservas</Link></p>
-      <h1>{reserva.veiculos?.placa} · {reserva.veiculos?.modelo}</h1>
+      <h1><Veiculo placa={reserva.veiculos?.placa} modelo={reserva.veiculos?.modelo} /></h1>
       <section className="cartao" aria-label="Dados da reserva">
-        <p><strong>{rotuloStatus(reserva.status)}</strong></p>
+        <p><Situacao status={reserva.status} /></p>
         <p>Retirada: {formatarDataHora(reserva.inicio)}<br />Devolução: {formatarDataHora(reserva.fim)}</p>
         <p>Motorista: {nome(reserva.motorista_id)}</p>
         {reserva.finalidade && <p>Finalidade: {reserva.finalidade}</p>}
@@ -86,7 +88,7 @@ export default function ReservaDetalhe() {
         <ol>
           {eventos.map((e) => (
             <li key={e.id} style={{ marginBottom: 8 }}>
-              <strong>{rotuloStatus(e.para_status)}</strong> · {formatarDataHora(e.em)} · {nome(e.ator_id)}
+              <strong>{rotuloStatus(e.para_status)}</strong>, {formatarDataHora(e.em)}, por {nome(e.ator_id)}
               {typeof e.detalhe.justificativa === 'string' && e.detalhe.justificativa && <><br />Justificativa: {e.detalhe.justificativa}</>}
               {e.detalhe.motivo === 'falha_critica_no_checklist' && <><br />Item de segurança reprovado na vistoria; sem penalidade.</>}
               {e.detalhe.cancelamento_tardio === true && <><br />Cancelamento fora do prazo da política.</>}

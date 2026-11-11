@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { formatarDataHora } from '../lib/datas'
-import { rotuloStatus } from '../lib/status'
+import { Veiculo } from '../components/Placa'
+import { Situacao } from '../components/Situacao'
 import { supabase } from '../lib/supabase'
 
 type Reserva = { id: string; inicio: string; fim: string; status: string; veiculos: { placa: string; modelo: string } | null }
@@ -37,10 +38,10 @@ export default function MinhasReservas() {
               )}
               {lista?.map((r) => (
                 <tr key={r.id}>
-                  <td>{r.veiculos?.placa} · {r.veiculos?.modelo}</td>
+                  <td><Veiculo placa={r.veiculos?.placa} modelo={r.veiculos?.modelo} /></td>
                   <td>{formatarDataHora(r.inicio)}</td>
                   <td>{formatarDataHora(r.fim)}</td>
-                  <td>{rotuloStatus(r.status)}</td>
+                  <td><Situacao status={r.status} /></td>
                   <td className="acoes"><Link to={`/reservas/${r.id}`}>Ver detalhes</Link></td>
                 </tr>
               ))}
