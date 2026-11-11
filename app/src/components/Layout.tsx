@@ -3,7 +3,7 @@ import { useEmpresa } from '../lib/empresa'
 import { supabase } from '../lib/supabase'
 
 export function Layout() {
-  const { empresaNome, podeGerir, podeAprovar, carregando, empresaId } = useEmpresa()
+  const { empresaNome, podeGerir, podeAprovar, podeOperar, carregando, empresaId } = useEmpresa()
   return (
     <>
       <header className="topo">
@@ -12,7 +12,10 @@ export function Layout() {
           <NavLink to="/reservar">Reservar</NavLink>
           <NavLink to="/reservas">Minhas reservas</NavLink>
           {podeAprovar && <NavLink to="/aprovacoes">Aprovações</NavLink>}
+          {podeOperar && <NavLink to="/portaria">Portaria</NavLink>}
+          {podeOperar && <NavLink to="/conferencia">Conferência</NavLink>}
           {podeGerir && <NavLink to="/frota">Frota</NavLink>}
+          {podeOperar && <NavLink to="/etiquetas">Etiquetas</NavLink>}
           {podeGerir && <NavLink to="/estrutura">Bases e vagas</NavLink>}
           {podeGerir && <NavLink to="/pessoas">Pessoas</NavLink>}
           {podeGerir && <NavLink to="/grupos">Grupos</NavLink>}

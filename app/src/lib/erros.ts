@@ -15,6 +15,12 @@ const MENSAGENS: Record<string, string> = {
   justificativa_obrigatoria: 'Para recusar, escreva a justificativa.',
   ultimo_admin: 'A empresa precisa de pelo menos um administrador ativo.',
   motorista_fora_da_empresa: 'Essa pessoa não pertence à empresa.',
+  fotos_obrigatorias_faltando: 'Faltam fotos obrigatórias. Tire todas as fotos pedidas.',
+  odometro_invalido: 'O odômetro informado é menor que o último registrado para esse veículo.',
+  combustivel_invalido: 'Informe o nível de combustível.',
+  checklist_obrigatorio: 'Responda todos os itens do checklist.',
+  vistoria_fora_de_hora: 'Essa vistoria não pode ser feita agora. Confira a situação da reserva.',
+  sem_permissao: 'Você não tem permissão para essa ação.',
   nao_autenticado: 'Sua sessão expirou. Entre novamente.',
 }
 

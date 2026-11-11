@@ -42,3 +42,23 @@ button:disabled { opacity: .6; cursor: default; }
 .aviso { background: color-mix(in srgb, var(--acento) 12%, transparent); border: 1px solid var(--acento); border-radius: 8px; padding: 10px 12px; }
 .so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 code { font-family: ui-monospace, Consolas, monospace; background: var(--fundo); padding: 2px 6px; border-radius: 4px; user-select: all; }
+textarea { font: inherit; padding: 8px 10px; border: 1px solid var(--borda); border-radius: 8px; background: var(--fundo); color: var(--texto); width: 100%; }
+a.botao { display: inline-block; padding: 8px 14px; border-radius: 8px; background: var(--acento); color: var(--acento-texto); text-decoration: none; }
+.item-checklist { border: 0; border-bottom: 1px solid var(--borda); padding: 8px 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+.item-checklist legend { float: left; width: 100%; padding: 0; font-weight: 600; margin-bottom: 4px; }
+.item-checklist > label:not(.linha) { flex-basis: 100%; }
+.etiqueta { font-size: .75rem; font-weight: 400; color: var(--suave); }
+label.foto { padding: 8px 0; border-bottom: 1px solid var(--borda); color: var(--texto); }
+.fotos-lado { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.fotos-lado figure { margin: 0; font-size: .8rem; color: var(--suave); }
+.fotos-lado img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 6px; border: 1px solid var(--borda); display: block; }
+.etiquetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+.etiqueta-qr { text-align: center; break-inside: avoid; }
+.etiqueta-qr .recorte { border: 1px dashed var(--borda); border-radius: 8px; padding: 8px; background: #fff; color: #000; }
+.etiqueta-qr img { width: 100%; display: block; }
+.codigo-grande { font-size: 1.6rem; letter-spacing: .2em; font-weight: 700; }
+@media print {
+  .topo, .nao-imprimir { display: none !important; }
+  body, main { background: #fff; padding: 0; max-width: none; }
+  .cartao { border: 0; padding: 0; }
+}

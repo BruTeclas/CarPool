@@ -79,16 +79,17 @@ Cada sprint termina com uma demonstração e com testes automatizados passando. 
 ### Sprint 4 · Chave, retirada, vistoria e devolução
 *Skills: `carpool-reserva`, `webapp-testing`, `web-design-guidelines`.*
 
-- [ ] Migration 005: `chaves` (identificador opaco), `vistorias`, `itens_de_vistoria`, `fotos`, `avarias`, `ocorrencias`, `ordens_de_servico`, bucket de fotos com policies.
-- [ ] Geração e impressão de etiquetas QR (identificador opaco, sem placa nem dados do carro).
-- [ ] Leitura do QR no app com os seis comportamentos do estudo (chave certa, errada, sem reserva, fora da janela, sem login, sem internet).
-- [ ] Painel da portaria: entrega manual de chave com código da reserva.
-- [ ] Vistoria de saída e de chegada: checklist por tipo de veículo, fotos guiadas (frente, traseira, duas laterais, painel), km e combustível, hash das fotos.
-- [ ] Comparação entre vistorias abre avaria; item crítico reprovado bloqueia o veículo e abre ordem de serviço.
-- [ ] Modo offline: reserva baixada no aparelho, fila local de leituras e fotos, sincronização com carimbo de tempo.
-- [ ] Teste em aparelhos reais (Android e iPhone) para câmera, QR e offline.
+- [x] Migration 007: `chaves` (identificador opaco, criada junto com o veículo), `vistorias`, `itens_de_vistoria`, `fotos`, `avarias`, `ocorrencias`, `ordens_de_servico`, bucket privado `vistorias` com policies.
+- [x] Etiquetas QR para impressão (o QR aponta para `/k/<código>`; sem placa no código).
+- [x] Leitura do QR pela câmera do celular (abre o app): chave certa, chave errada, sem reserva, antes e fora da janela, sem login, CNH vencida e veículo bloqueado.
+- [x] Portaria: entrega manual da chave pelo código de retirada e lista de movimento.
+- [x] Vistoria de saída e de chegada: checklist, fotos obrigatórias reduzidas no aparelho, com SHA-256, data, hora e local, odômetro e combustível.
+- [x] Comparação entre vistorias abre avaria; item crítico reprovado bloqueia o veículo e abre ordem de manutenção; conferência do gestor com fotos lado a lado.
+- [ ] Modo offline: reserva baixada no aparelho, fila local de leituras e fotos, sincronização com carimbo de tempo. **Não feito.**
+- [ ] Checklist configurável por tipo de veículo (hoje é uma lista padrão fixa no banco).
+- [ ] Teste em aparelhos reais (Android e iPhone) para câmera, QR e fotos. **Depende de publicar o sistema em HTTPS.**
 
-**Pronto quando:** o ciclo reserva → retirada → uso → devolução → encerramento roda de ponta a ponta no celular.
+**Pronto quando:** o ciclo reserva → retirada → uso → devolução → encerramento roda de ponta a ponta no celular. Rodou no navegador em tela de celular simulada (17 passos); falta o aparelho real.
 
 ### Sprint 5 · Exceções e rotinas automáticas
 *Skills: `carpool-reserva`, `supabase`.*

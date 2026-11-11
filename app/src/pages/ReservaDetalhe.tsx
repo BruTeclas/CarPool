@@ -10,14 +10,14 @@ import { supabase } from '../lib/supabase'
 
 type Reserva = {
   id: string; inicio: string; fim: string; status: string; finalidade: string | null; destino: string | null
-  motorista_id: string; solicitante_id: string; veiculos: { placa: string; modelo: string } | null
+  motorista_id: string; solicitante_id: string; codigo_retirada: string; veiculos: { placa: string; modelo: string } | null
 }
 type Evento = { id: number; para_status: string; ator_id: string | null; em: string; detalhe: Record<string, unknown> }
 
 export default function ReservaDetalhe() {
   const { id } = useParams()
   const { session } = useAuth()
-  const { empresaId, podeGerir } = useEmpresa()
+  const { empresaId, podeGerir, podeOperar } = useEmpresa()
   const pessoas = useOpcoes('membros', 'user_id', 'nome', empresaId)
   const [reserva, setReserva] = useState<Reserva | null | undefined>(undefined)
   const [eventos, setEventos] = useState<Evento[]>([])
@@ -26,7 +26,7 @@ export default function ReservaDetalhe() {
   const carregar = useCallback(async () => {
     const [r, e] = await Promise.all([
       supabase.from('reservas')
-        .select('id, inicio, fim, status, finalidade, destino, motorista_id, solicitante_id, veiculos(placa, modelo)')
+        .select('id, inicio, fim, status, finalidade, destino, motorista_id, solicitante_id, codigo_retirada, veiculos(placa, modelo)')
         .eq('id', id ?? '').maybeSingle<Reserva>(),
       supabase.from('eventos_da_reserva').select('id, para_status, ator_id, em, detalhe')
         .eq('reserva_id', id ?? '').order('em').returns<Evento[]>(),
@@ -63,6 +63,19 @@ export default function ReservaDetalhe() {
         <p>Motorista: {nome(reserva.motorista_id)}</p>
         {reserva.finalidade && <p>Finalidade: {reserva.finalidade}</p>}
         {reserva.destino && <p>Destino: {reserva.destino}</p>}
+        {reserva.status === 'aprovada' && dono && (
+          <div className="aviso">
+            <p style={{ marginTop: 0 }}>Para retirar: leia o QR da chave com a câmera do celular, ou informe este código na portaria.</p>
+            <p className="codigo-grande" style={{ margin: 0 }} aria-label="Código de retirada">{reserva.codigo_retirada}</p>
+          </div>
+        )}
+        {reserva.status === 'liberada' && (dono || podeOperar) && (
+          <p><Link className="botao" to={`/reservas/${reserva.id}/vistoria/saida`}>Fazer vistoria de saída</Link></p>
+        )}
+        {(reserva.status === 'em_uso' || reserva.status === 'atrasada') && (dono || podeOperar) && (
+          <p><Link className="botao" to={`/reservas/${reserva.id}/vistoria/chegada`}>Devolver veículo (vistoria de chegada)</Link></p>
+        )}
+        {reserva.status === 'devolvida' && <p>Devolução registrada. Aguardando a conferência do gestor.</p>}
         {erro && <p role="alert" className="erro">{erro}</p>}
         {podeCancelar(reserva.status) && (dono || podeGerir) && (
           <button type="button" className="perigo" onClick={cancelar}>Cancelar reserva</button>
@@ -75,6 +88,7 @@ export default function ReservaDetalhe() {
             <li key={e.id} style={{ marginBottom: 8 }}>
               <strong>{rotuloStatus(e.para_status)}</strong> · {formatarDataHora(e.em)} · {nome(e.ator_id)}
               {typeof e.detalhe.justificativa === 'string' && e.detalhe.justificativa && <><br />Justificativa: {e.detalhe.justificativa}</>}
+              {e.detalhe.motivo === 'falha_critica_no_checklist' && <><br />Item de segurança reprovado na vistoria; sem penalidade.</>}
               {e.detalhe.cancelamento_tardio === true && <><br />Cancelamento fora do prazo da política.</>}
             </li>
           ))}

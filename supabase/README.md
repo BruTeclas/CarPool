@@ -29,3 +29,7 @@ Em `functions/criar-membro`. Chamada pela tela Pessoas: só um administrador ati
 
 - `tests/sprint3.sql`: aceite de política, reserva por categoria, horários alternativos, recusa com justificativa, cancelamento tardio e último administrador. Autossuficiente (cria e desfaz os próprios dados); sucesso = `OK_TESTES_PASSARAM`.
 - `tests/isolamento.sql` e `tests/reservas.sql` dependem dos usuários do `seed.sql`, que não existem no projeto remoto.
+- `tests/sprint4.sql`: chave (certa, errada, desconhecida, janela), vistorias com fotos obrigatórias, avarias, bloqueio por item crítico e liberação pela manutenção. Autossuficiente; sucesso = `OK_TESTES_PASSARAM`.
+
+## Fotos de vistoria
+Bucket privado `vistorias`, caminho `<empresa>/<reserva>/<arquivo>`. O Supabase não permite apagar arquivos por SQL: use o painel (Storage) ou a API. Apagar a reserva remove os registros das fotos, mas **não** os arquivos.
