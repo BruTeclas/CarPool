@@ -25,20 +25,20 @@ export default function Entrar() {
   }
 
   return (
-    <main style={{ maxWidth: 360, margin: '0 auto', padding: 16 }}>
+    <main style={{ maxWidth: 380 }}>
       <h1>Entrar</h1>
       <form onSubmit={entrar} style={{ display: 'grid', gap: 12 }}>
         <label>
           E-mail
           <input type="email" autoComplete="email" required value={email}
-            onChange={(e) => setEmail(e.target.value)} style={{ display: 'block', width: '100%' }} />
+            onChange={(e) => setEmail(e.target.value)} />
         </label>
         <label>
           Senha
           <input type="password" autoComplete="current-password" required value={senha}
-            onChange={(e) => setSenha(e.target.value)} style={{ display: 'block', width: '100%' }} />
+            onChange={(e) => setSenha(e.target.value)} />
         </label>
-        {erro && <p role="alert" style={{ color: '#b00020' }}>{erro}</p>}
+        {erro && <p role="alert" className="erro">{erro}</p>}
         <button type="submit" disabled={enviando}>{enviando ? 'Entrando…' : 'Entrar'}</button>
       </form>
     </main>

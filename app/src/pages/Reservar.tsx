@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom'
 import { mensagemDeErro } from '../lib/erros'
 import { supabase } from '../lib/supabase'
 
@@ -63,8 +62,7 @@ export default function Reservar() {
   }
 
   return (
-    <main style={{ maxWidth: 640, margin: '0 auto', padding: 16 }}>
-      <p><Link to="/">← Meu perfil</Link></p>
+    <main>
       <h1>Reservar veículo</h1>
       <form onSubmit={buscar} style={{ display: 'grid', gap: 8 }}>
         <label>Retirada <input type="datetime-local" required value={inicio} onChange={(e) => setInicio(e.target.value)} /></label>
@@ -72,7 +70,7 @@ export default function Reservar() {
         <button type="submit">Ver veículos livres</button>
       </form>
       {mensagem && (
-        <p role={mensagem.erro ? 'alert' : 'status'} style={{ color: mensagem.erro ? '#b00020' : '#1b5e20' }}>{mensagem.texto}</p>
+        <p role={mensagem.erro ? 'alert' : 'status'} className={mensagem.erro ? 'erro' : 'sucesso'}>{mensagem.texto}</p>
       )}
       {livres && (
         <>

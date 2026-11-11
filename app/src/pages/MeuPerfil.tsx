@@ -1,41 +1,42 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useAuth } from '../auth/AuthProvider'
-import { supabase } from '../lib/supabase'
+import { useEmpresa } from '../lib/empresa'
 import { rotuloPerfil } from '../lib/perfis'
-import type { Perfil } from '../lib/perfis'
-
-type Vinculo = { id: string; perfil: Perfil; nome: string; empresas: { nome: string } | null }
+import { supabase } from '../lib/supabase'
 
 export default function MeuPerfil() {
   const { session } = useAuth()
-  const [vinculos, setVinculos] = useState<Vinculo[]>([])
-  const [erro, setErro] = useState<string | null>(null)
+  const { empresaNome, perfis } = useEmpresa()
+  const [senha, setSenha] = useState('')
+  const [mensagem, setMensagem] = useState<{ texto: string; erro: boolean } | null>(null)
 
-  useEffect(() => {
-    supabase
-      .from('membros')
-      .select('id, perfil, nome, empresas(nome)')
-      .eq('user_id', session?.user.id ?? '')
-      .returns<Vinculo[]>()
-      .then(({ data, error }) => {
-        if (error) setErro('Não foi possível carregar seu perfil.')
-        else setVinculos(data ?? [])
-      })
-  }, [session?.user.id])
+  async function trocarSenha(e: FormEvent) {
+    e.preventDefault()
+    setMensagem(null)
+    const { error } = await supabase.auth.updateUser({ password: senha })
+    if (error) return setMensagem({ texto: 'Não foi possível trocar a senha. Use ao menos 8 caracteres.', erro: true })
+    setSenha('')
+    setMensagem({ texto: 'Senha alterada.', erro: false })
+  }
 
   return (
-    <main style={{ maxWidth: 480, margin: '0 auto', padding: 16 }}>
+    <main>
       <h1>Meu perfil</h1>
-      <p>{session?.user.email}</p>
-      {erro && <p role="alert">{erro}</p>}
-      <ul>
-        {vinculos.map((v) => (
-          <li key={v.id}>{v.nome} · {rotuloPerfil(v.perfil)} · {v.empresas?.nome}</li>
-        ))}
-      </ul>
-      <p><Link to="/reservar">Reservar veículo</Link> · <Link to="/frota">Frota</Link></p>
-      <button onClick={() => supabase.auth.signOut()}>Sair</button>
+      <section className="cartao">
+        <p><strong>{session?.user.email}</strong></p>
+        <p>{empresaNome}{perfis.length > 0 && ` · ${perfis.map(rotuloPerfil).join(', ')}`}</p>
+      </section>
+      <section className="cartao" aria-label="Trocar senha">
+        <h2>Trocar senha</h2>
+        <form onSubmit={trocarSenha} className="acoes">
+          <label>Nova senha
+            <input type="password" autoComplete="new-password" minLength={8} required value={senha} onChange={(e) => setSenha(e.target.value)} />
+          </label>
+          <button type="submit">Salvar senha</button>
+        </form>
+        {mensagem && <p role={mensagem.erro ? 'alert' : 'status'} className={mensagem.erro ? 'erro' : 'sucesso'}>{mensagem.texto}</p>}
+      </section>
     </main>
   )
 }

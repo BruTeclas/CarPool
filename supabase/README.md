@@ -23,3 +23,6 @@ with e as (insert into public.empresas (nome) values ('Nome da empresa') returni
 insert into public.membros (empresa_id, user_id, perfil, nome)
 select e.id, (select id from auth.users where email = 'seu@email.com'), 'admin', 'Seu nome' from e;
 ```
+
+## Função `criar-membro`
+Em `functions/criar-membro`. Chamada pela tela Pessoas: só um administrador ativo da empresa consegue usar. Cria a conta com senha provisória (mostrada uma única vez) ou, se o e-mail já tiver conta, apenas vincula à empresa. Publicar de novo após alterar o arquivo.

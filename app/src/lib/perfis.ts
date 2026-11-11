@@ -12,6 +12,8 @@ const ROTULOS: Record<Perfil, string> = {
   admin: 'Administrador',
 }
 
+export const PERFIS = (Object.keys(ROTULOS) as Perfil[]).map((p) => ({ valor: p as string, rotulo: ROTULOS[p] }))
+
 export function rotuloPerfil(perfil: Perfil): string {
   return ROTULOS[perfil]
 }
