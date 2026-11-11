@@ -193,7 +193,7 @@ export default function Reservar() {
         </section>
       )}
 
-      {livres && livres.length === 0 && <p role="status">Nenhum veículo livre nesse período.</p>}
+      {livres && livres.length === 0 && <p role="status">Nenhum veículo livre nesse período nas filiais liberadas para você.</p>}
 
       {alternativas.length > 0 && (
         <section className="cartao" aria-label="Horários alternativos">

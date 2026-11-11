@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Crud } from '../components/Crud'
 import { useEmpresa } from '../lib/empresa'
+import { mensagemDeCadastro } from '../lib/erros-banco'
 import { useOpcoes } from '../lib/opcoes'
 import { PERFIS } from '../lib/perfis'
 import { supabase } from '../lib/supabase'
@@ -14,7 +15,29 @@ export default function Pessoas() {
   const [versao, setVersao] = useState(0)
   const pessoas = useOpcoes('membros', 'user_id', 'nome', empresaId, versao)
   const [novo, setNovo] = useState({ nome: '', email: '', perfil: 'motorista' })
+  const filiais = useOpcoes('unidades', 'id', 'nome', empresaId)
+  const [pessoaFilial, setPessoaFilial] = useState('')
+  const [liberadas, setLiberadas] = useState<string[]>([])
+  const [erroFilial, setErroFilial] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
+
+  const carregarFiliais = useCallback(async () => {
+    if (!pessoaFilial) return setLiberadas([])
+    const { data } = await supabase.from('membro_unidades').select('unidade_id').eq('user_id', pessoaFilial)
+    setLiberadas((data ?? []).map((l) => l.unidade_id as string))
+  }, [pessoaFilial])
+
+  useEffect(() => { void carregarFiliais() }, [carregarFiliais])
+
+  async function alternarFilial(unidadeId: string, liberar: boolean) {
+    setErroFilial(null)
+    setLiberadas((l) => (liberar ? [...l, unidadeId] : l.filter((x) => x !== unidadeId))) // marca na hora; o servidor confirma abaixo
+    const { error } = liberar
+      ? await supabase.from('membro_unidades').insert({ empresa_id: empresaId, user_id: pessoaFilial, unidade_id: unidadeId })
+      : await supabase.from('membro_unidades').delete().eq('user_id', pessoaFilial).eq('unidade_id', unidadeId)
+    if (error) setErroFilial(mensagemDeCadastro(error))
+    await carregarFiliais()
+  }
   const [retorno, setRetorno] = useState<{ erro?: string; senha?: string; email?: string; existente?: boolean } | null>(null)
 
   async function convidar(e: FormEvent) {
@@ -61,7 +84,8 @@ export default function Pessoas() {
           {retorno?.senha && (
             <p role="status" className="aviso">
               Acesso criado para {retorno.email}. Senha provisória: <code>{retorno.senha}</code><br />
-              Anote agora: ela não será mostrada de novo. Peça para a pessoa trocar em "Meu perfil".
+              Anote agora: ela não será mostrada de novo. Peça para a pessoa trocar em "Meu perfil".<br />
+              Se a empresa tem mais de uma filial, libere abaixo as filiais que essa pessoa pode usar.
             </p>
           )}
           {retorno?.existente && (
@@ -76,6 +100,31 @@ export default function Pessoas() {
           { nome: 'perfil', rotulo: 'Perfil', tipo: 'selecao', opcoes: PERFIS, obrigatorio: true },
           { nome: 'ativo', rotulo: 'Ativo', tipo: 'selecao', opcoes: SIM_NAO, obrigatorio: true, converter: (v) => v === 'true' },
         ]} />
+      {podeGerir && (
+        <section className="cartao" aria-label="Filiais liberadas">
+          <h2>Filiais liberadas por pessoa</h2>
+          <p>Cada pessoa só vê e reserva veículos das filiais marcadas aqui. Administradores e gestores de frota veem todas.</p>
+          <label>Pessoa
+            <select value={pessoaFilial} onChange={(e) => setPessoaFilial(e.target.value)}>
+              <option value="">Selecione…</option>
+              {pessoas.map((p) => <option key={p.valor} value={p.valor}>{p.rotulo}</option>)}
+            </select>
+          </label>
+          {erroFilial && <p role="alert" className="erro">{erroFilial}</p>}
+          {pessoaFilial && (
+            <fieldset style={{ border: 0, padding: 0, marginTop: 12 }}>
+              <legend className="so-leitor">Filiais</legend>
+              {filiais.length === 0 && <p>Cadastre as filiais em "Bases e vagas".</p>}
+              {filiais.map((f) => (
+                <label key={f.valor} className="linha">
+                  <input type="checkbox" checked={liberadas.includes(f.valor)} onChange={(e) => alternarFilial(f.valor, e.target.checked)} />
+                  {f.rotulo}
+                </label>
+              ))}
+            </fieldset>
+          )}
+        </section>
+      )}
       <Crud titulo="CNH dos condutores" tabela="cnhs" ordem="validade" podeEditar={podeGerir} versao={versao}
         campos={[
           { nome: 'user_id', rotulo: 'Pessoa', tipo: 'selecao', opcoes: pessoas, obrigatorio: true },

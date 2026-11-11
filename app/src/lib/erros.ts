@@ -21,6 +21,8 @@ const MENSAGENS: Record<string, string> = {
   checklist_obrigatorio: 'Responda todos os itens do checklist.',
   vistoria_fora_de_hora: 'Essa vistoria não pode ser feita agora. Confira a situação da reserva.',
   sem_permissao: 'Você não tem permissão para essa ação.',
+  veiculo_fora_da_sua_filial: 'Esse veículo é de uma filial à qual você não tem acesso.',
+  motorista_sem_acesso_a_filial: 'Essa pessoa não tem acesso à filial desse veículo.',
   nao_autenticado: 'Sua sessão expirou. Entre novamente.',
 }
 

@@ -17,7 +17,7 @@ Complementa `plano-mvp.md` (visão por etapas) com o estado real do projeto, dec
 
 ## 2. Decisões técnicas (valem para todos os sprints)
 
-**Multiempresa.** Toda tabela de negócio tem `empresa_id`. A tabela `membros` liga usuário, empresa e perfil. RLS compara `empresa_id` com as empresas do usuário logado, via função auxiliar em schema privado (não exposto pela API). Um usuário pode ter vários perfis e vários escopos (base).
+**Multiempresa e filiais.** Toda tabela de negócio tem `empresa_id`, e a RLS só mostra a empresa do usuário. Dentro da empresa, a estrutura é filial (`unidades`) → base → vaga/veículo. A tabela `membro_unidades` diz quais filiais cada pessoa pode usar: ela só vê e reserva veículos, bases, vagas, chaves e reservas dessas filiais. Administrador e gestor de frota veem todas. Em empresa com uma única filial, quem entra recebe essa filial automaticamente; com duas ou mais, o acesso é liberado pessoa a pessoa na tela Pessoas. As funções `SECURITY DEFINER` ignoram RLS, então a filial é conferida também nelas e num gatilho de `reservas` (migration 008).
 
 **Estado da reserva só muda no servidor.** O papel `authenticated` não tem `UPDATE` direto na tabela de reservas. Toda mudança passa por função `SECURITY DEFINER` (`transicionar_reserva`), que valida a regra, grava o `evento_da_reserva` e devolve o novo estado.
 

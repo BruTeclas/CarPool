@@ -15,6 +15,10 @@ Qual carro está disponível, quem pode usá-lo, quem está com ele agora, quand
 
 Motorista, Solicitante, Aprovador, Gestor de base, Gestor de frota, Financeiro (somente leitura), Administrador.
 
+## Empresa e filiais
+
+Cada empresa só vê os próprios dados. Dentro da empresa, cada pessoa só vê e reserva veículos das filiais (`unidades`) liberadas para ela em `membro_unidades`; admin e gestor de frota veem todas. Tabela ou função nova que exponha veículo, base, chave ou reserva precisa respeitar a filial (`app.unidades_do_usuario()`), além do `empresa_id`.
+
 ## Regras configuráveis (padrões sugeridos; por empresa, unidade ou grupo)
 
 1. Antecedência mínima 1 h, máxima 60 dias.

@@ -12,13 +12,13 @@ export default function Estrutura() {
 
   return (
     <main>
-      <h1>Bases e vagas</h1>
-      <Crud titulo="Unidades" tabela="unidades" ordem="nome" podeEditar={podeGerir} aoMudar={mudou}
+      <h1>Filiais, bases e vagas</h1>
+      <Crud titulo="Filiais" tabela="unidades" ordem="nome" podeEditar={podeGerir} aoMudar={mudou}
         campos={[{ nome: 'nome', rotulo: 'Nome', obrigatorio: true }]} />
       <Crud titulo="Bases (pátios)" tabela="bases" ordem="nome" podeEditar={podeGerir} aoMudar={mudou} versao={versao}
         campos={[
           { nome: 'nome', rotulo: 'Nome', obrigatorio: true },
-          { nome: 'unidade_id', rotulo: 'Unidade', tipo: 'selecao', opcoes: unidades, obrigatorio: true },
+          { nome: 'unidade_id', rotulo: 'Filial', tipo: 'selecao', opcoes: unidades, obrigatorio: true },
           { nome: 'endereco', rotulo: 'Endereço' },
         ]} />
       <Crud titulo="Vagas" tabela="vagas" ordem="codigo" podeEditar={podeGerir} versao={versao}

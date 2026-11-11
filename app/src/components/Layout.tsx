@@ -16,7 +16,7 @@ export function Layout() {
           {podeOperar && <NavLink to="/conferencia">Conferência</NavLink>}
           {podeGerir && <NavLink to="/frota">Frota</NavLink>}
           {podeOperar && <NavLink to="/etiquetas">Etiquetas</NavLink>}
-          {podeGerir && <NavLink to="/estrutura">Bases e vagas</NavLink>}
+          {podeGerir && <NavLink to="/estrutura">Filiais e bases</NavLink>}
           {podeGerir && <NavLink to="/pessoas">Pessoas</NavLink>}
           {podeGerir && <NavLink to="/grupos">Grupos</NavLink>}
           {podeGerir && <NavLink to="/politicas">Políticas</NavLink>}
