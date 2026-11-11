@@ -67,12 +67,12 @@ Cada sprint termina com uma demonstração e com testes automatizados passando. 
 ### Sprint 3 · Fluxo do motorista: reservar e aprovar
 *Skills: `vercel-react-best-practices`, `web-design-guidelines`, `carpool-reserva`.*
 
-- [ ] Telas do motorista: nova reserva em até 3 toques, minhas reservas, detalhe com linha do tempo de eventos.
-- [ ] Reserva por categoria e por placa; mensagem clara em caso de conflito, com horários alternativos.
-- [ ] Aprovação por alçada (pernoite, fim de semana, distância): fila do aprovador, decisão com justificativa.
-- [ ] Aceite da política vigente antes da primeira reserva.
-- [ ] Cancelamento com regra de antecedência.
-- [ ] Testes de interface com Playwright no fluxo reservar → aprovar → cancelar.
+- [x] Telas do motorista: nova reserva em até 3 toques, minhas reservas, detalhe com linha do tempo de eventos.
+- [x] Reserva por categoria e por placa; mensagem clara em caso de conflito, com horários alternativos.
+- [x] Aprovação por alçada (pernoite, fim de semana, distância): fila do aprovador, decisão com justificativa.
+- [x] Aceite da política vigente antes da primeira reserva.
+- [x] Cancelamento com regra de antecedência.
+- [~] Fluxo reservar → aprovar → cancelar testado no navegador com script Playwright avulso (16 passos). O script ainda **não está no repositório nem no CI**, porque depende de usuários de teste no banco.
 
 **Pronto quando:** motorista e aprovador completam o fluxo no celular e a trilha de eventos aparece correta.
 

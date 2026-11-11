@@ -26,3 +26,6 @@ select e.id, (select id from auth.users where email = 'seu@email.com'), 'admin',
 
 ## Função `criar-membro`
 Em `functions/criar-membro`. Chamada pela tela Pessoas: só um administrador ativo da empresa consegue usar. Cria a conta com senha provisória (mostrada uma única vez) ou, se o e-mail já tiver conta, apenas vincula à empresa. Publicar de novo após alterar o arquivo.
+
+- `tests/sprint3.sql`: aceite de política, reserva por categoria, horários alternativos, recusa com justificativa, cancelamento tardio e último administrador. Autossuficiente (cria e desfaz os próprios dados); sucesso = `OK_TESTES_PASSARAM`.
+- `tests/isolamento.sql` e `tests/reservas.sql` dependem dos usuários do `seed.sql`, que não existem no projeto remoto.

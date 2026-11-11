@@ -13,6 +13,7 @@ type Config = {
   intervalo_tecnico_min: number
   tolerancia_noshow_min: number
   tolerancia_atraso_min: number
+  cancelamento_min_horas: number
   aprovar_pernoite: boolean
   aprovar_fim_de_semana: boolean
 }
@@ -20,7 +21,7 @@ type Politica = { id: string; nome: string; versao: number; ativa: boolean; grup
 
 const PADRAO: Config = {
   antecedencia_min_horas: 1, antecedencia_max_dias: 60, duracao_max_horas: 12, limite_semanal_horas: 40,
-  intervalo_tecnico_min: 30, tolerancia_noshow_min: 30, tolerancia_atraso_min: 15,
+  intervalo_tecnico_min: 30, tolerancia_noshow_min: 30, tolerancia_atraso_min: 15, cancelamento_min_horas: 2,
   aprovar_pernoite: true, aprovar_fim_de_semana: true,
 }
 const NUMEROS: { chave: keyof Config; rotulo: string }[] = [
@@ -31,6 +32,7 @@ const NUMEROS: { chave: keyof Config; rotulo: string }[] = [
   { chave: 'intervalo_tecnico_min', rotulo: 'Intervalo entre reservas (minutos)' },
   { chave: 'tolerancia_noshow_min', rotulo: 'Tolerância de retirada (minutos)' },
   { chave: 'tolerancia_atraso_min', rotulo: 'Tolerância de atraso (minutos)' },
+  { chave: 'cancelamento_min_horas', rotulo: 'Cancelar sem penalidade até (horas antes)' },
 ]
 
 export default function Politicas() {

@@ -11,6 +11,10 @@ const MENSAGENS: Record<string, string> = {
   limite_semanal_excedido: 'Você atingiu o limite semanal de horas de uso.',
   veiculo_indisponivel: 'Esse veículo não está disponível para reserva.',
   veiculo_nao_encontrado: 'Veículo não encontrado.',
+  sem_veiculo_disponivel: 'Não há veículo livre nesse horário.',
+  justificativa_obrigatoria: 'Para recusar, escreva a justificativa.',
+  ultimo_admin: 'A empresa precisa de pelo menos um administrador ativo.',
+  motorista_fora_da_empresa: 'Essa pessoa não pertence à empresa.',
   nao_autenticado: 'Sua sessão expirou. Entre novamente.',
 }
 

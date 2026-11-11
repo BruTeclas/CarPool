@@ -3,13 +3,15 @@ import { useEmpresa } from '../lib/empresa'
 import { supabase } from '../lib/supabase'
 
 export function Layout() {
-  const { empresaNome, podeGerir, carregando, empresaId } = useEmpresa()
+  const { empresaNome, podeGerir, podeAprovar, carregando, empresaId } = useEmpresa()
   return (
     <>
       <header className="topo">
         <strong>Car Pool{empresaNome ? ` · ${empresaNome}` : ''}</strong>
         <nav aria-label="Principal">
           <NavLink to="/reservar">Reservar</NavLink>
+          <NavLink to="/reservas">Minhas reservas</NavLink>
+          {podeAprovar && <NavLink to="/aprovacoes">Aprovações</NavLink>}
           {podeGerir && <NavLink to="/frota">Frota</NavLink>}
           {podeGerir && <NavLink to="/estrutura">Bases e vagas</NavLink>}
           {podeGerir && <NavLink to="/pessoas">Pessoas</NavLink>}
