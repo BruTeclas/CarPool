@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { Icone } from '../components/Icone'
 import { supabase } from '../lib/supabase'
 
 export default function Entrar() {
@@ -30,17 +31,10 @@ export default function Entrar() {
 
   return (
     <div className="entrada">
-      <aside className="entrada-lado">
-        <span className="marca">Car Pool</span>
-        <div>
-          <p>Reserve, retire e devolva os veículos da empresa. Tudo fica registrado: quem pegou, quando e em que estado voltou.</p>
-          <div className="vagas" aria-hidden="true">
-            <span /><span className="ocupada"><span className="placa">BRA 2E19</span></span><span /><span />
-          </div>
-        </div>
-      </aside>
-      <main className="entrada-form">
-      <h1>Entrar</h1>
+      <main className="entrada-cartao">
+        <span className="marca-icone grande"><Icone nome="chave" tamanho={30} /></span>
+        <h1>Car Pool</h1>
+        <p className="entrada-sub">Entre para reservar, retirar e devolver os veículos da empresa.</p>
       <form onSubmit={entrar}>
         <label>
           E-mail
