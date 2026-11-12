@@ -6,6 +6,7 @@ import { Situacao } from '../components/Situacao'
 import { formatarDataHora } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
+import { reservasLocais } from '../lib/offline'
 import { useOpcoes } from '../lib/opcoes'
 import { podeCancelar, rotuloStatus } from '../lib/status'
 import { supabase } from '../lib/supabase'
@@ -26,6 +27,12 @@ export default function ReservaDetalhe() {
   const [erro, setErro] = useState<string | null>(null)
 
   const carregar = useCallback(async () => {
+    const doAparelho = async () => {
+      const l = (await reservasLocais()).find((x) => x.id === id)
+      const uid = session?.user.id ?? ''
+      setReserva(l ? { id: l.id, inicio: l.inicio, fim: l.fim, status: l.status, finalidade: null, destino: null, motorista_id: uid, solicitante_id: uid, codigo_retirada: l.codigo_retirada, veiculos: { placa: l.placa, modelo: l.modelo } } : null)
+    }
+    if (!navigator.onLine) return doAparelho()
     const [r, e] = await Promise.all([
       supabase.from('reservas')
         .select('id, inicio, fim, status, finalidade, destino, motorista_id, solicitante_id, codigo_retirada, veiculos(placa, modelo)')
@@ -33,9 +40,10 @@ export default function ReservaDetalhe() {
       supabase.from('eventos_da_reserva').select('id, para_status, ator_id, em, detalhe')
         .eq('reserva_id', id ?? '').order('em').returns<Evento[]>(),
     ])
+    if (r.error) return doAparelho()
     setReserva(r.data ?? null)
     setEventos(e.data ?? [])
-  }, [id])
+  }, [id, session?.user.id])
 
   useEffect(() => { void carregar() }, [carregar])
 

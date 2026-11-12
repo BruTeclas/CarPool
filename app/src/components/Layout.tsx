@@ -28,7 +28,7 @@ export function Layout() {
         ...(podeOperar ? [{ para: '/etiquetas', icone: 'etiquetas', rotulo: 'Etiquetas das chaves' }] : []),
         ...(podeGerir ? [
           { para: '/estrutura', icone: 'estrutura', rotulo: 'Filiais e bases' }, { para: '/pessoas', icone: 'pessoas', rotulo: 'Pessoas' },
-          { para: '/grupos', icone: 'grupos', rotulo: 'Grupos' }, { para: '/politicas', icone: 'politicas', rotulo: 'Políticas de uso' },
+          { para: '/grupos', icone: 'grupos', rotulo: 'Grupos' }, { para: '/checklist', icone: 'conferencia', rotulo: 'Checklist da vistoria' }, { para: '/politicas', icone: 'politicas', rotulo: 'Políticas de uso' },
         ] : []),
       ],
     },

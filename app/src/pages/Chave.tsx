@@ -3,11 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { Veiculo } from '../components/Placa'
 import { formatarDataHora } from '../lib/datas'
+import { baixarPacote, lerChaveSemSinal, semSinal } from '../lib/offline'
+import type { Leitura } from '../lib/offline'
 import { supabase } from '../lib/supabase'
-
-type Leitura = {
-  resultado: string; reserva_id?: string; placa?: string; modelo?: string; inicio?: string; livre_agora?: boolean
-}
 
 /** Página aberta ao ler o QR da chave (o QR aponta para /k/<código>). */
 export default function Chave() {
@@ -26,9 +24,12 @@ export default function Chave() {
     }
     if (lido.current) return // cada abertura da página conta como uma leitura só
     lido.current = true
+    const lerSemSinal = () => lerChaveSemSinal(codigo).then(setLeitura).catch(() => setErro(true))
+    if (!navigator.onLine) { void lerSemSinal(); return }
     supabase.rpc('ler_chave', { p_codigo: codigo }).then(({ data, error }) => {
-      if (error) setErro(true)
-      else setLeitura(data as Leitura)
+      if (error && semSinal(error)) void lerSemSinal()
+      else if (error) setErro(true)
+      else { setLeitura(data as Leitura); void baixarPacote() }
     })
   }, [carregando, session, codigo])
 
@@ -37,7 +38,7 @@ export default function Chave() {
   function conteudo() {
     if (!session) {
       if (ficha === undefined) return <p>Carregando…</p>
-      if (ficha === null) return <p role="alert" className="erro">Etiqueta não reconhecida.</p>
+      if (ficha === null) return <p role="alert" className="erro">{navigator.onLine ? 'Etiqueta não reconhecida.' : 'Sem sinal. Entre no sistema quando houver internet para usar este aparelho sem sinal depois.'}</p>
       return (
         <>
           <p>Veículo de frota: <strong>{ficha.modelo}</strong><br />Base: {ficha.base}</p>
@@ -53,7 +54,7 @@ export default function Chave() {
         return (
           <>
             <p role="status" className="sucesso"><strong>Chave certa.</strong> {carro}</p>
-            <p>Retirada registrada. Antes de sair, faça a vistoria de saída.</p>
+            <p>{leitura.offline ? 'Você está sem sinal: a retirada ficou guardada neste aparelho e será enviada quando o sinal voltar.' : 'Retirada registrada.'} Antes de sair, faça a vistoria de saída.</p>
             <Link className="botao" to={`/reservas/${leitura.reserva_id}/vistoria/saida`}>Iniciar vistoria de saída</Link>
           </>
         )
@@ -85,10 +86,12 @@ export default function Chave() {
         return (
           <>
             <p role="alert" className="erro"><strong>O prazo de retirada passou.</strong></p>
-            <p>A reserva foi encerrada como não retirada. Faça uma nova reserva.</p>
+            <p>{leitura.offline ? 'O horário de retirada da sua reserva já passou. Procure a portaria ou faça uma nova reserva quando houver sinal.' : 'A reserva foi encerrada como não retirada. Faça uma nova reserva.'}</p>
             <Link to="/reservar">Reservar</Link>
           </>
         )
+      case 'sem_sinal':
+        return <p role="alert" className="erro"><strong>Sem sinal, e essa chave não é de nenhuma reserva guardada neste aparelho.</strong> Procure a portaria ou tente de novo quando houver internet.</p>
       case 'cnh_invalida':
         return <p role="alert" className="erro"><strong>Sua CNH está vencida ou não cadastrada.</strong> Procure o gestor da frota antes de retirar o veículo.</p>
       case 'veiculo_bloqueado':

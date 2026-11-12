@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { formatarDataHora } from '../lib/datas'
 import { Veiculo } from '../components/Placa'
 import { Situacao } from '../components/Situacao'
+import { baixarPacote, reservasLocais } from '../lib/offline'
 import { supabase } from '../lib/supabase'
 
 type Reserva = { id: string; inicio: string; fim: string; status: string; veiculos: { placa: string; modelo: string } | null }
@@ -15,6 +16,8 @@ export default function MinhasReservas() {
 
   useEffect(() => {
     if (!uid) return
+    const doAparelho = async () => setLista((await reservasLocais()).map((r) => ({ id: r.id, inicio: r.inicio, fim: r.fim, status: r.status, veiculos: { placa: r.placa, modelo: r.modelo } })))
+    if (!navigator.onLine) { void doAparelho(); return }
     supabase
       .from('reservas')
       .select('id, inicio, fim, status, veiculos(placa, modelo)')
@@ -22,7 +25,10 @@ export default function MinhasReservas() {
       .order('inicio', { ascending: false })
       .limit(50)
       .returns<Reserva[]>()
-      .then(({ data }) => setLista(data ?? []))
+      .then(async ({ data, error }) => {
+        if (!error) { setLista(data ?? []); void baixarPacote(); return }
+        await doAparelho() // falha de rede: mostra o que está guardado no aparelho
+      })
   }, [uid])
 
   return (

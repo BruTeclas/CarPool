@@ -34,3 +34,7 @@ Em `functions/criar-membro`. Chamada pela tela Pessoas: só um administrador ati
 ## Fotos de vistoria
 Bucket privado `vistorias`, caminho `<empresa>/<reserva>/<arquivo>`. O Supabase não permite apagar arquivos por SQL: use o painel (Storage) ou a API. Apagar a reserva remove os registros das fotos, mas **não** os arquivos.
 - `tests/filiais.sql`: acesso por filial e por empresa (quem vê o quê, reserva fora da filial, portaria de outra filial, vazamento entre empresas). Autossuficiente; sucesso = `OK_TESTES_PASSARAM`.
+- `tests/offline.sql`: leitura de chave com horário do aparelho, pacote offline sem o código da chave e checklist por categoria. Autossuficiente; sucesso = `OK_TESTES_PASSARAM`.
+
+## Modo offline
+O aparelho guarda (IndexedDB) o resultado de `minhas_reservas_offline()` e uma fila de leituras e vistorias. `ler_chave(codigo, lido_em)` aceita o horário do aparelho quando ele não está no futuro e tem menos de 48 h. Só funciona na versão publicada (o service worker não roda no `npm run dev`); para testar localmente use `npm run build && npx vite preview`.

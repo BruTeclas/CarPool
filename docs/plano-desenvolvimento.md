@@ -85,8 +85,8 @@ Cada sprint termina com uma demonstração e com testes automatizados passando. 
 - [x] Portaria: entrega manual da chave pelo código de retirada e lista de movimento.
 - [x] Vistoria de saída e de chegada: checklist, fotos obrigatórias reduzidas no aparelho, com SHA-256, data, hora e local, odômetro e combustível.
 - [x] Comparação entre vistorias abre avaria; item crítico reprovado bloqueia o veículo e abre ordem de manutenção; conferência do gestor com fotos lado a lado.
-- [ ] Modo offline: reserva baixada no aparelho, fila local de leituras e fotos, sincronização com carimbo de tempo. **Não feito.**
-- [ ] Checklist configurável por tipo de veículo (hoje é uma lista padrão fixa no banco).
+- [x] Modo offline: as reservas ativas ficam guardadas no aparelho; leitura da chave, checklist e fotos funcionam sem sinal e vão para uma fila; o envio é automático quando o sinal volta, com o horário original do aparelho (aceito só se não estiver no futuro nem tiver mais de 48 h). Testado no navegador com a rede desligada.
+- [x] Checklist configurável: lista geral da empresa ou por categoria de veículo; sem itens cadastrados vale a lista padrão. Regras testadas no banco; a tela de cadastro não foi testada no navegador.
 - [ ] Teste em aparelhos reais (Android e iPhone) para câmera, QR e fotos. **Depende de publicar o sistema em HTTPS.**
 
 **Pronto quando:** o ciclo reserva → retirada → uso → devolução → encerramento roda de ponta a ponta no celular. Rodou no navegador em tela de celular simulada (17 passos); falta o aparelho real.

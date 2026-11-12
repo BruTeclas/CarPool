@@ -3,28 +3,30 @@ import type { FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Veiculo } from '../components/Placa'
 import { mensagemDeErro } from '../lib/erros'
-import { enviarFoto, POSICOES_CHEGADA, POSICOES_SAIDA } from '../lib/fotos'
-import type { FotoEnviada } from '../lib/fotos'
+import { POSICOES_CHEGADA, POSICOES_SAIDA, prepararFoto, subirFoto } from '../lib/fotos'
+import type { FotoDaVistoria } from '../lib/fotos'
+import { baixarPacote, guardarVistoria, reservasLocais, semSinal } from '../lib/offline'
+import type { ItemChecklist } from '../lib/offline'
 import { supabase } from '../lib/supabase'
 
-type Reserva = { id: string; empresa_id: string; status: string; veiculos: { placa: string; modelo: string; odometro_km: number } | null }
-type ItemChecklist = { item: string; critico: boolean; ordem: number }
+type Reserva = { id: string; empresa_id: string; status: string; placa: string; modelo: string; odometro_km: number }
 type Resposta = { ok: boolean | null; observacao: string }
-type Resultado = { resultado: string; avarias?: number; bloqueado?: boolean; km_rodados?: number; itens?: string }
+type Resultado = { resultado: string; avarias?: number; bloqueado?: boolean; km_rodados?: number; itens?: string; offline?: boolean }
 
 const NIVEIS = [{ v: 0, r: 'Reserva' }, { v: 25, r: '1/4' }, { v: 50, r: '1/2' }, { v: 75, r: '3/4' }, { v: 100, r: 'Cheio' }]
 
 export default function Vistoria() {
   const { id = '', tipo = 'saida' } = useParams()
   const chegada = tipo === 'chegada'
+  const vistoria = chegada ? 'chegada' : 'saida'
   const posicoes = chegada ? POSICOES_CHEGADA : POSICOES_SAIDA
   const [reserva, setReserva] = useState<Reserva | null | undefined>(undefined)
   const [checklist, setChecklist] = useState<ItemChecklist[]>([])
   const [respostas, setRespostas] = useState<Record<string, Resposta>>({})
   const [odometro, setOdometro] = useState('')
   const [combustivel, setCombustivel] = useState('')
-  const [fotos, setFotos] = useState<Record<string, FotoEnviada>>({})
-  const [enviandoFoto, setEnviandoFoto] = useState<string | null>(null)
+  const [fotos, setFotos] = useState<Record<string, FotoDaVistoria>>({})
+  const [preparando, setPreparando] = useState<string | null>(null)
   const [avarias, setAvarias] = useState('')
   const [observacoes, setObservacoes] = useState('')
   const [erro, setErro] = useState<string | null>(null)
@@ -32,61 +34,108 @@ export default function Vistoria() {
   const [resultado, setResultado] = useState<Resultado | null>(null)
 
   useEffect(() => {
-    supabase.from('reservas').select('id, empresa_id, status, veiculos(placa, modelo, odometro_km)')
-      .eq('id', id).maybeSingle<Reserva>().then(({ data }) => {
-        setReserva(data ?? null)
-        if (data?.veiculos) setOdometro(String(data.veiculos.odometro_km))
-      })
-    supabase.rpc('checklist_padrao').then(({ data }) =>
-      setChecklist(((data as ItemChecklist[]) ?? []).sort((a, b) => a.ordem - b.ordem)))
+    let vivo = true
+    async function carregar() {
+      const local = (await reservasLocais()).find((r) => r.id === id)
+      const doAparelho: Reserva | null = local
+        ? { id: local.id, empresa_id: local.empresa_id, status: local.status, placa: local.placa, modelo: local.modelo, odometro_km: local.odometro_km } : null
+      if (!navigator.onLine) {
+        // sem sinal não se espera o servidor: vale o que está guardado no aparelho
+        if (!vivo) return
+        setReserva(doAparelho)
+        if (doAparelho) setOdometro(String(doAparelho.odometro_km))
+        setChecklist([...(local?.checklist ?? [])].sort((a, b) => a.ordem - b.ordem))
+        return
+      }
+      const { data, error } = await supabase.from('reservas')
+        .select('id, empresa_id, status, veiculos(placa, modelo, odometro_km)').eq('id', id)
+        .maybeSingle<{ id: string; empresa_id: string; status: string; veiculos: { placa: string; modelo: string; odometro_km: number } | null }>()
+      if (!vivo) return
+      const r: Reserva | null = data?.veiculos && !error
+        ? { id: data.id, empresa_id: data.empresa_id, status: data.status, ...data.veiculos }
+        : doAparelho
+      setReserva(r)
+      if (r) setOdometro(String(r.odometro_km))
+      const lista = await supabase.rpc('checklist_da_reserva', { p_reserva: id })
+      if (!vivo) return
+      const itens = (lista.data as ItemChecklist[] | null)?.length ? (lista.data as ItemChecklist[]) : local?.checklist ?? []
+      setChecklist([...itens].sort((a, b) => a.ordem - b.ordem))
+    }
+    void carregar()
+    return () => { vivo = false }
   }, [id])
 
   async function escolherFoto(posicao: string, arquivo: File | undefined) {
     if (!arquivo || !reserva) return
     setErro(null)
-    setEnviandoFoto(posicao)
+    setPreparando(posicao)
     try {
-      const foto = await enviarFoto(reserva.empresa_id, reserva.id, tipo, posicao, arquivo)
+      const pronta = await prepararFoto(posicao, arquivo)
+      let foto: FotoDaVistoria = pronta
+      if (navigator.onLine) {
+        try { foto = await subirFoto(reserva.empresa_id, reserva.id, vistoria, pronta) } catch { /* fica no aparelho e sobe depois */ }
+      }
       setFotos((f) => ({ ...f, [posicao]: foto }))
     } catch {
-      setErro('Não foi possível enviar a foto. Verifique o sinal e tente de novo.')
+      setErro('Não foi possível ler essa foto. Tente tirar de novo.')
     }
-    setEnviandoFoto(null)
+    setPreparando(null)
   }
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     setErro(null)
+    if (!reserva) return
     if (checklist.some((c) => respostas[c.item]?.ok == null)) return setErro('Responda todos os itens do checklist.')
     if (checklist.some((c) => respostas[c.item]?.ok === false && !respostas[c.item].observacao.trim())) {
       return setErro('Descreva o problema nos itens marcados com problema.')
     }
     if (posicoes.some((p) => !fotos[p.id])) return setErro('Faltam fotos obrigatórias. Tire todas as fotos pedidas.')
+    if (Number(odometro) < reserva.odometro_km) return setErro('O odômetro informado é menor que o último registrado para esse veículo.')
+
+    const itens = checklist.map((c) => ({ item: c.item, ok: respostas[c.item].ok === true, observacao: respostas[c.item].observacao }))
+    const novasAvarias = avarias.split('\n').map((l) => l.trim()).filter(Boolean)
+    const guardarNoAparelho = async () => setResultado(await guardarVistoria({
+      reserva: reserva.id, empresa: reserva.empresa_id, vistoria, odometro: Number(odometro), combustivel: Number(combustivel),
+      itens, fotos: Object.values(fotos), observacoes, avarias: novasAvarias,
+    }, checklist))
+
     setSalvando(true)
-    const { data, error } = await supabase.rpc('registrar_vistoria', {
-      p_reserva: id, p_tipo: tipo, p_odometro: Number(odometro), p_combustivel: Number(combustivel),
-      p_itens: checklist.map((c) => ({ item: c.item, ok: respostas[c.item].ok, observacao: respostas[c.item].observacao })),
-      p_fotos: Object.values(fotos), p_observacoes: observacoes,
-      p_avarias: avarias.split('\n').map((l) => l.trim()).filter(Boolean),
-    })
-    setSalvando(false)
-    if (error) return setErro(mensagemDeErro(error))
-    setResultado(data as Resultado)
+    try {
+      if (!navigator.onLine) return await guardarNoAparelho()
+      const enviadas = []
+      for (const f of Object.values(fotos)) enviadas.push('caminho' in f ? f : await subirFoto(reserva.empresa_id, reserva.id, vistoria, f))
+      const { data, error } = await supabase.rpc('registrar_vistoria', {
+        p_reserva: id, p_tipo: vistoria, p_odometro: Number(odometro), p_combustivel: Number(combustivel),
+        p_itens: itens, p_fotos: enviadas, p_observacoes: observacoes, p_avarias: novasAvarias,
+      })
+      if (error && semSinal(error)) return await guardarNoAparelho()
+      if (error) return setErro(mensagemDeErro(error))
+      setResultado(data as Resultado)
+      void baixarPacote()
+    } catch (falha) {
+      if (semSinal(falha as Error)) await guardarNoAparelho()
+      else setErro('Não foi possível enviar as fotos. Verifique o sinal e tente de novo.')
+    } finally {
+      setSalvando(false)
+    }
   }
 
   if (reserva === undefined) return <main><p>Carregando…</p></main>
-  if (reserva === null) return <main><p role="alert" className="erro">Reserva não encontrada.</p></main>
+  if (reserva === null) return <main><p role="alert" className="erro">Reserva não encontrada. Sem sinal, só aparecem as reservas já abertas neste aparelho.</p></main>
 
   if (resultado) {
     const r = resultado.resultado
     return (
       <main style={{ maxWidth: 560 }}>
-        <h1>Vistoria registrada</h1>
+        <h1>Vistoria {resultado.offline ? 'guardada' : 'registrada'}</h1>
         <section className="cartao" aria-label="Resultado da vistoria">
+          {resultado.offline && <p className="aviso">Você está sem sinal. A vistoria ficou guardada neste aparelho e será enviada sozinha quando o sinal voltar. Não apague os dados do navegador até lá.</p>}
           {r === 'em_uso' && <p role="status" className="sucesso"><strong>Tudo certo, boa viagem.</strong> Na volta, leia a chave de novo ou abra a reserva para fazer a vistoria de chegada.</p>}
-          {r === 'veiculo_bloqueado' && <p role="alert" className="erro"><strong>Não saia com este veículo.</strong> Item crítico reprovado ({resultado.itens}). O carro foi bloqueado, a manutenção foi avisada e sua reserva foi cancelada sem penalidade. Devolva a chave e reserve outro veículo.</p>}
+          {r === 'veiculo_bloqueado' && <p role="alert" className="erro"><strong>Não saia com este veículo.</strong> Item de segurança reprovado ({resultado.itens}). O carro fica bloqueado, a manutenção é avisada e sua reserva é cancelada sem penalidade. Devolva a chave e reserve outro veículo.</p>}
           {r === 'encerrada' && <p role="status" className="sucesso"><strong>Devolução concluída.</strong> Você rodou {resultado.km_rodados} km. Devolva a chave no local combinado.</p>}
-          {r === 'devolvida' && <p role="status"><strong>Devolução registrada.</strong> Você rodou {resultado.km_rodados} km. {resultado.avarias ? `${resultado.avarias} avaria(s) foram registradas` : 'Um item crítico foi reprovado'} e o gestor vai conferir antes de encerrar. Devolva a chave no local combinado.</p>}
+          {r === 'devolvida' && <p role="status"><strong>Devolução registrada.</strong> Você rodou {resultado.km_rodados} km. {resultado.avarias ? `${resultado.avarias} avaria(s) foram registradas` : 'Um item de segurança foi reprovado'} e o gestor vai conferir antes de encerrar. Devolva a chave no local combinado.</p>}
+          {r === 'guardada' && <p role="status"><strong>Devolução guardada.</strong> Devolva a chave no local combinado.</p>}
           <p>{r === 'veiculo_bloqueado' ? <Link to="/reservar">Reservar outro veículo</Link> : <Link to={`/reservas/${id}`}>Ver a reserva</Link>}</p>
         </section>
       </main>
@@ -104,7 +153,7 @@ export default function Vistoria() {
   return (
     <main style={{ maxWidth: 640 }}>
       <h1>Vistoria de {chegada ? 'chegada' : 'saída'}</h1>
-      <p><Veiculo placa={reserva.veiculos?.placa} modelo={reserva.veiculos?.modelo} /></p>
+      <p><Veiculo placa={reserva.placa} modelo={reserva.modelo} /></p>
       <form onSubmit={salvar}>
         <section className="cartao" aria-label="Checklist">
           <h2>Checklist</h2>
@@ -130,7 +179,7 @@ export default function Vistoria() {
           <h2>Odômetro e combustível</h2>
           <div className="form-grade" style={{ marginTop: 0, paddingTop: 0, borderTop: 0 }}>
             <label>Odômetro (km)
-              <input type="number" inputMode="numeric" required min={reserva.veiculos?.odometro_km ?? 0} value={odometro} onChange={(e) => setOdometro(e.target.value)} />
+              <input type="number" inputMode="numeric" required min={reserva.odometro_km} value={odometro} onChange={(e) => setOdometro(e.target.value)} />
             </label>
             <label>Combustível
               <select required value={combustivel} onChange={(e) => setCombustivel(e.target.value)}>
@@ -143,13 +192,16 @@ export default function Vistoria() {
         <section className="cartao" aria-label="Fotos">
           <h2>Fotos</h2>
           <p>Tire uma foto de cada posição. Elas ficam registradas com data, hora e local.</p>
-          {posicoes.map((p) => (
-            <label key={p.id} className="foto">
-              <span>{p.rotulo} {fotos[p.id] ? <strong className="sucesso">✓ enviada</strong> : enviandoFoto === p.id ? 'enviando…' : ''}</span>
-              <input type="file" accept="image/*" capture="environment" aria-label={`Foto: ${p.rotulo}`}
-                disabled={enviandoFoto !== null} onChange={(e) => escolherFoto(p.id, e.target.files?.[0])} />
-            </label>
-          ))}
+          {posicoes.map((p) => {
+            const f = fotos[p.id]
+            return (
+              <label key={p.id} className="foto">
+                <span>{p.rotulo} {f ? <strong className="sucesso">{'caminho' in f ? '✓ enviada' : '✓ guardada no aparelho'}</strong> : preparando === p.id ? 'preparando…' : ''}</span>
+                <input type="file" accept="image/*" capture="environment" aria-label={`Foto: ${p.rotulo}`}
+                  disabled={preparando !== null} onChange={(e) => escolherFoto(p.id, e.target.files?.[0])} />
+              </label>
+            )
+          })}
         </section>
         <section className="cartao" aria-label="Observações">
           {chegada && (
@@ -162,7 +214,7 @@ export default function Vistoria() {
           </label>
         </section>
         {erro && <p role="alert" className="erro">{erro}</p>}
-        <button type="submit" disabled={salvando || enviandoFoto !== null}>{salvando ? 'Salvando…' : `Concluir vistoria de ${chegada ? 'chegada' : 'saída'}`}</button>
+        <button type="submit" disabled={salvando || preparando !== null}>{salvando ? 'Salvando…' : `Concluir vistoria de ${chegada ? 'chegada' : 'saída'}`}</button>
       </form>
     </main>
   )
