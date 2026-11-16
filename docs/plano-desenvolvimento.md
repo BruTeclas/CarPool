@@ -99,7 +99,7 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [x] Condutor envia a CNH e outros documentos com foto ou PDF e a data de validade.
 - [x] Gestor confere e aprova ou recusa com motivo; só documento aprovado e válido libera a reserva.
 - [x] Documentos do veículo (CRLV, seguro, licenciamento) com o mesmo controle de validade.
-- [x] Painel "vencendo em breve" para o gestor e aviso para o condutor, com prazo de antecedência configurável pela empresa (padrão 30 dias). Os lembretes escalonados (30, 15 e 7 dias) por e-mail ficam para as notificações do Sprint 5.
+- [x] Painel "vencendo em breve" para o gestor e aviso para o condutor, com prazo de antecedência configurável pela empresa (padrão 30 dias). Os lembretes escalonados (30, 15 e 7 dias) por e-mail ficam para o item "Envio de e-mail", depois do Sprint 7.
 - [x] Termo de uso redigido pelo administrador, com versões.
 - [x] Assinatura desenhada na tela antes da primeira reserva e a cada nova versão, com nome, data, hora e código de integridade do texto.
 - [x] Termo assinado em PDF, guardado sem alteração e disponível para o condutor e para o gestor.
@@ -114,7 +114,7 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [ ] Jobs agendados (`pg_cron` e Edge Functions): no-show (30 min), alerta de atraso (15 min), expiração de credenciais, suspensão após 3 ocorrências em 30 dias.
 - [ ] Realocação: se o atraso afeta a próxima reserva, oferecer outro veículo ao próximo usuário.
 - [ ] Botão de ocorrência (pane ou acidente) com localização e encerramento especial.
-- [ ] Notificações por e-mail e push; preferências do usuário.
+- [ ] Notificações dentro do sistema e push no aparelho; preferências do usuário. (E-mail adiado: ver "Envio de e-mail", depois do Sprint 7.)
 - [ ] Um teste automatizado por exceção listada no estudo.
 
 **Pronto quando:** cada exceção do estudo tem comportamento definido, testado e visível na linha do tempo.
@@ -141,6 +141,16 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [ ] Roteiro de implantação para o primeiro cliente (cadastro, etiquetas, treinamento).
 
 **Pronto quando:** o sistema está publicado, com checklist de segurança e LGPD fechado, pronto para um piloto.
+
+### Pendente para depois · Envio de e-mail
+*Combinado em 16/11/2026: fazer só quando os outros pontos estiverem terminados.*
+
+- [ ] Decidir o serviço de envio (recomendação: Resend, que tem plano grátis e integra bem com o Supabase).
+- [ ] Configurar o domínio do remetente (por exemplo `zentrega.com.br`) com os registros DNS que o serviço pedir.
+- [ ] Cadastrar a chave do serviço como segredo do Supabase (nunca no código nem no chat).
+- [ ] E-mails de vencimento de documento escalonados a 30, 15 e 7 dias, para o condutor e para o gestor.
+- [ ] E-mails das exceções do Sprint 5 (no-show, atraso, suspensão, ocorrência) e de aprovação de reserva, respeitando as preferências do usuário.
+- [ ] Usar o mesmo serviço para os e-mails do login (convite e troca de senha) no lugar do envio padrão do Supabase, que tem limite baixo.
 
 ## 4. Riscos e como o plano os cobre
 
