@@ -44,3 +44,9 @@ O aparelho guarda (IndexedDB) o resultado de `minhas_reservas_offline()` e uma f
 - Documento enviado pelo condutor fica `pendente` até `conferir_documento`; só aprovado e dentro da validade conta. Aprovar uma CNH atualiza a tabela `cnhs` (`app.aplicar_cnh`).
 - `termos` não pode ter o texto alterado e `assinaturas_de_termo` é só de inclusão; para nova redação publique uma nova versão. A tela de reserva usa `pendencias_para_reservar(empresa)`.
 - `tests/documentos.sql`: autossuficiente; sucesso = `OK_TESTES_PASSARAM`.
+
+## Exceções e rotinas (Sprint 5)
+- `pg_cron` roda `app.rotina_minuto()` a cada minuto (expira solicitação, no-show, atraso, realocação) e `app.rotina_diaria()` às 08:07 de Brasília (vencimento de documentos). Ver em `cron.job` e `cron.job_run_details`.
+- Pane ou acidente fica em `incidentes` (a tabela `ocorrencias` do Sprint 4 é o registro geral de eventos). A reserva vai para o estado `ocorrencia` e o carro para `bloqueado` até o gestor encerrar.
+- Avisos em `notificacoes` (cada pessoa só lê os seus). Faltas e suspensões em `faltas` e `suspensoes`; limites em `politica_padrao()` (`suspensao_faltas`, `suspensao_janela_dias`, `suspensao_dias`, `realocacao_antecedencia_min`).
+- `tests/excecoes.sql`: autossuficiente; sucesso = `OK_TESTES_PASSARAM`.

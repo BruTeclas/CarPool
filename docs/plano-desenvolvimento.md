@@ -99,7 +99,7 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [x] Condutor envia a CNH e outros documentos com foto ou PDF e a data de validade.
 - [x] Gestor confere e aprova ou recusa com motivo; só documento aprovado e válido libera a reserva.
 - [x] Documentos do veículo (CRLV, seguro, licenciamento) com o mesmo controle de validade.
-- [x] Painel "vencendo em breve" para o gestor e aviso para o condutor, com prazo de antecedência configurável pela empresa (padrão 30 dias). Os lembretes escalonados (30, 15 e 7 dias) por e-mail ficam para o item "Envio de e-mail", depois do Sprint 7.
+- [x] Painel "vencendo em breve" para o gestor e aviso para o condutor, com prazo de antecedência configurável pela empresa (padrão 30 dias). Os lembretes escalonados (30, 15 e 7 dias) por e-mail ficam para o item "Envio de e-mail e push", depois do Sprint 7.
 - [x] Termo de uso redigido pelo administrador, com versões.
 - [x] Assinatura desenhada na tela antes da primeira reserva e a cada nova versão, com nome, data, hora e código de integridade do texto.
 - [x] Termo assinado em PDF, guardado sem alteração e disponível para o condutor e para o gestor.
@@ -111,13 +111,15 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 ### Sprint 5 · Exceções e rotinas automáticas
 *Skills: `carpool-reserva`, `supabase`.*
 
-- [ ] Jobs agendados (`pg_cron` e Edge Functions): no-show (30 min), alerta de atraso (15 min), expiração de credenciais, suspensão após 3 ocorrências em 30 dias.
-- [ ] Realocação: se o atraso afeta a próxima reserva, oferecer outro veículo ao próximo usuário.
-- [ ] Botão de ocorrência (pane ou acidente) com localização e encerramento especial.
-- [ ] Notificações dentro do sistema e push no aparelho; preferências do usuário. (E-mail adiado: ver "Envio de e-mail", depois do Sprint 7.)
-- [ ] Um teste automatizado por exceção listada no estudo.
+- [x] Rotinas agendadas no banco (`pg_cron`, a cada minuto): no-show após a tolerância (30 min), atraso após fim + 15 min com aviso ao motorista e à gestão, solicitação que chega ao horário sem aprovação expira, chave lida sem retirada também vira no-show, suspensão automática após 3 faltas em 30 dias (prazos configuráveis na política). Rotina diária de vencimento de documentos (prazo da empresa, 15, 7, 1 e 0 dias).
+- [x] Realocação: atraso ou ocorrência que afeta a próxima reserva oferece outro veículo (mesma categoria e base primeiro, filial liberada, CNH e documentos em dia); o motorista aceita ou mantém; sem alternativa, a gestão é avisada.
+- [x] Botão "Pane ou acidente" na reserva em uso: tipo, atalhos para 192/193/190 quando há vítima, localização do celular, telefone da assistência (padrão da empresa ou do carro), fotos, funciona sem sinal. Carro bloqueado na hora; gestor encerra informando onde o carro ficou (encerramento especial).
+- [x] Avisos dentro do sistema (menu Avisos, com contador) para motorista e gestão. Push no aparelho e preferências do usuário foram para o item "Envio de e-mail e push", depois do Sprint 7, porque precisam do app publicado em HTTPS para testar.
+- [x] Teste automatizado do banco: `supabase/tests/excecoes.sql` (10 situações); fluxo testado no navegador, inclusive em tela de celular.
 
 **Pronto quando:** cada exceção do estudo tem comportamento definido, testado e visível na linha do tempo.
+
+**Situação (16/11/2026):** concluído, menos push e preferências (adiados com o e-mail). Não testado em celular real nem a fila offline da ocorrência (o modo offline só roda na versão publicada).
 
 ### Sprint 6 · Central da portaria e relatórios
 *Skills: `vercel-react-best-practices`, `web-design-guidelines`, `supabase`.*
@@ -142,7 +144,7 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 
 **Pronto quando:** o sistema está publicado, com checklist de segurança e LGPD fechado, pronto para um piloto.
 
-### Pendente para depois · Envio de e-mail
+### Pendente para depois · Envio de e-mail e push
 *Combinado em 16/11/2026: fazer só quando os outros pontos estiverem terminados.*
 
 - [ ] Decidir o serviço de envio (recomendação: Resend, que tem plano grátis e integra bem com o Supabase).
@@ -150,6 +152,7 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [ ] Cadastrar a chave do serviço como segredo do Supabase (nunca no código nem no chat).
 - [ ] E-mails de vencimento de documento escalonados a 30, 15 e 7 dias, para o condutor e para o gestor.
 - [ ] E-mails das exceções do Sprint 5 (no-show, atraso, suspensão, ocorrência) e de aprovação de reserva, respeitando as preferências do usuário.
+- [ ] Notificação push no aparelho (PWA) e preferências do usuário (o que receber e por qual canal); precisa do app publicado em HTTPS.
 - [ ] Usar o mesmo serviço para os e-mails do login (convite e troca de senha) no lugar do envio padrão do Supabase, que tem limite baixo.
 
 ## 4. Riscos e como o plano os cobre

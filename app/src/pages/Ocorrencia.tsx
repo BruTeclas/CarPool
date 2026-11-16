@@ -169,7 +169,7 @@ export default function Ocorrencia() {
               {arquivos.length > 0 && <small>{arquivos.length} foto{arquivos.length > 1 ? 's' : ''} escolhida{arquivos.length > 1 ? 's' : ''}.</small>}
             </section>
             {erro && <p role="alert" className="erro">{erro}</p>}
-            <p><button type="submit" className="perigo" disabled={enviando}>{enviando ? 'Registrando…' : 'Registrar ocorrência'}</button></p>
+            <p><button type="submit" className="sos grande" disabled={enviando}>{enviando ? 'Registrando…' : 'Registrar ocorrência'}</button></p>
           </>
         )}
       </form>

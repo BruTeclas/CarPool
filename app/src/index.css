@@ -217,3 +217,9 @@ body:has(.sincronia) main { padding-bottom: 150px; }
 .aviso-item.importante.novo { background: linear-gradient(90deg, var(--atencao-leve), transparent 60%); margin: 0 -24px; padding: 14px 24px; }
 .selo-novo { display: inline-block; margin-right: 8px; padding: 2px 8px; border-radius: 980px; background: var(--acao); color: #fff; font-size: .72rem; font-weight: 600; }
 .nota { color: var(--suave); font-size: .9rem; margin: -6px 4px 18px; }
+button.opcao, button.opcao:hover { background: var(--folha); color: var(--texto); }
+button.opcao:hover { border-color: var(--suave); }
+button.opcao.escolhida { background: var(--acao-leve); }
+button.sos { background: var(--perigo); color: #fff; }
+button.sos:hover:not(:disabled) { filter: brightness(1.08); background: var(--perigo); }
+button.grande { width: 100%; padding: 14px 20px; font-size: 1.05rem; }
