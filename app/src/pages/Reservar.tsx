@@ -114,8 +114,8 @@ export default function Reservar() {
     if (lista.length === 0) {
       // demanda não atendida: alimenta o relatório "a frota é suficiente?"
       void supabase.rpc('registrar_demanda_nao_atendida', {
-        p_empresa: empresaId, p_inicio: paraInstante(ini), p_fim: paraInstante(f), p_categoria: categoriaId || null,
-      })
+        p_empresa: empresaId ?? null, p_inicio: paraInstante(ini), p_fim: paraInstante(f), p_categoria: categoriaId || null,
+      }).then(() => undefined) // o cliente só envia quando alguém espera a resposta
       await sugerir(ini, f)
     }
   }
