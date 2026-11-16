@@ -26,6 +26,7 @@ export default function Documentos() {
   const [docsVeiculo, setDocsVeiculo] = useState<Documento[]>([])
   const [envio, setEnvio] = useState<{ tipo: string; validade: string; arquivo: File | null }>({ tipo: '', validade: '', arquivo: null })
   const [dias, setDias] = useState('')
+  const [formVeiculo, setFormVeiculo] = useState(0)
   const [mensagem, setMensagem] = useState<{ texto: string; erro: boolean } | null>(null)
 
   const carregar = useCallback(async () => {
@@ -74,7 +75,7 @@ export default function Documentos() {
         p_validade: tipo?.tem_validade ? envio.validade : null, p_veiculo: veiculoId,
       })
       setMensagem(error ? { texto: mensagemDeErro(error), erro: true } : { texto: 'Documento do veículo registrado.', erro: false })
-      if (!error) setEnvio({ tipo: '', validade: '', arquivo: null })
+      if (!error) { setEnvio({ tipo: '', validade: '', arquivo: null }); setFormVeiculo((x) => x + 1) }
     } catch {
       setMensagem({ texto: 'Não foi possível enviar o arquivo. Use foto ou PDF de até 10 MB.', erro: true })
     }
@@ -139,7 +140,7 @@ export default function Documentos() {
           </div>
         )}
         {ehAdmin && (
-          <form onSubmit={salvarDias} className="acoes" style={{ marginTop: 16 }}>
+          <form onSubmit={salvarDias} className="acoes" style={{ marginTop: 16, alignItems: 'flex-end' }}>
             <label>Avisar com quantos dias de antecedência
               <input type="number" min={1} max={365} required value={dias} onChange={(e) => setDias(e.target.value)} style={{ maxWidth: 140 }} />
             </label>
@@ -170,7 +171,7 @@ export default function Documentos() {
           )
         })}
         {veiculoId && tiposVeiculo.length > 0 && (
-          <form onSubmit={enviarDoVeiculo} className="form-grade" aria-label="Enviar documento do veículo">
+          <form key={formVeiculo} onSubmit={enviarDoVeiculo} className="form-grade" aria-label="Enviar documento do veículo">
             <h3>Registrar documento</h3>
             <label>Tipo
               <select required value={envio.tipo} onChange={(e) => setEnvio({ ...envio, tipo: e.target.value })}>

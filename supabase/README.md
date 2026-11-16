@@ -38,3 +38,9 @@ Bucket privado `vistorias`, caminho `<empresa>/<reserva>/<arquivo>`. O Supabase 
 
 ## Modo offline
 O aparelho guarda (IndexedDB) o resultado de `minhas_reservas_offline()` e uma fila de leituras e vistorias. `ler_chave(codigo, lido_em)` aceita o horário do aparelho quando ele não está no futuro e tem menos de 48 h. Só funciona na versão publicada (o service worker não roda no `npm run dev`); para testar localmente use `npm run build && npx vite preview`.
+
+## Documentos e termos
+- Bucket privado `documentos`, caminho `<empresa>/<pessoa ou veículo>/<arquivo>`. Arquivos não podem ser apagados pelo app (são evidência); para limpar dados de teste, use o painel do Supabase (Storage).
+- Documento enviado pelo condutor fica `pendente` até `conferir_documento`; só aprovado e dentro da validade conta. Aprovar uma CNH atualiza a tabela `cnhs` (`app.aplicar_cnh`).
+- `termos` não pode ter o texto alterado e `assinaturas_de_termo` é só de inclusão; para nova redação publique uma nova versão. A tela de reserva usa `pendencias_para_reservar(empresa)`.
+- `tests/documentos.sql`: autossuficiente; sucesso = `OK_TESTES_PASSARAM`.

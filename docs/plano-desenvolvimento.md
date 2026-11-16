@@ -95,16 +95,18 @@ Cada sprint termina com uma demonstração e com testes automatizados passando. 
 
 Decisões confirmadas: documentos do veículo entram junto; documento enviado pelo condutor só vale depois de aprovado pelo gestor; a assinatura é eletrônica simples (desenhada na tela, com registro de evidências), não certificado ICP-Brasil.
 
-- [ ] Tipos de documento definidos pelo administrador (do condutor e do veículo), com marcação de obrigatório e de validade.
-- [ ] Condutor envia a CNH e outros documentos com foto ou PDF e a data de validade.
-- [ ] Gestor confere e aprova ou recusa com motivo; só documento aprovado e válido libera a reserva.
-- [ ] Documentos do veículo (CRLV, seguro, licenciamento) com o mesmo controle de validade.
-- [ ] Avisos de vencimento a 30, 15 e 7 dias (prazos configuráveis) e painel "vencendo em breve". Por e-mail só depois das notificações do Sprint 5; até lá, dentro do sistema.
-- [ ] Termo de uso redigido pelo administrador, com versões.
-- [ ] Assinatura desenhada na tela antes da primeira reserva e a cada nova versão, com nome, data, hora e código de integridade do texto.
-- [ ] Termo assinado em PDF, guardado sem alteração e disponível para o condutor e para o gestor.
+- [x] Tipos de documento definidos pelo administrador (do condutor e do veículo), com marcação de obrigatório e de validade.
+- [x] Condutor envia a CNH e outros documentos com foto ou PDF e a data de validade.
+- [x] Gestor confere e aprova ou recusa com motivo; só documento aprovado e válido libera a reserva.
+- [x] Documentos do veículo (CRLV, seguro, licenciamento) com o mesmo controle de validade.
+- [x] Painel "vencendo em breve" para o gestor e aviso para o condutor, com prazo de antecedência configurável pela empresa (padrão 30 dias). Os lembretes escalonados (30, 15 e 7 dias) por e-mail ficam para as notificações do Sprint 5.
+- [x] Termo de uso redigido pelo administrador, com versões.
+- [x] Assinatura desenhada na tela antes da primeira reserva e a cada nova versão, com nome, data, hora e código de integridade do texto.
+- [x] Termo assinado em PDF, guardado sem alteração e disponível para o condutor e para o gestor.
 
 **Pronto quando:** um condutor novo só consegue reservar depois de ter documentos aprovados e o termo assinado, e os dois lados conseguem baixar o termo.
+
+**Situação (16/11/2026):** concluído. Banco testado em `supabase/tests/documentos.sql`; fluxo completo testado no navegador (assinatura, bloqueio até a CNH aprovada, aprovação, vencimento, documento do veículo, PDF, nova versão do termo exigindo nova assinatura). A recusa de documento foi testada só no banco, não no navegador.
 
 ### Sprint 5 · Exceções e rotinas automáticas
 *Skills: `carpool-reserva`, `supabase`.*
