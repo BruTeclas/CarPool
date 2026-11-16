@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { useContagem } from '../lib/avisos'
 import { useEmpresa } from '../lib/empresa'
 import { supabase } from '../lib/supabase'
 import { Icone } from './Icone'
@@ -11,14 +12,23 @@ export function Layout() {
   const { session } = useAuth()
   const { empresaNome, podeGerir, podeAprovar, podeOperar, carregando, empresaId } = useEmpresa()
   const [aberto, setAberto] = useState(false)
+  const uid = session?.user.id
+  const consultaAvisos = useCallback(() => supabase.from('notificacoes').select('id', { count: 'exact', head: true })
+    .eq('user_id', uid ?? '').is('lida_em', null), [uid])
+  const consultaAbertas = useCallback(() => supabase.from('incidentes').select('id', { count: 'exact', head: true })
+    .eq('empresa_id', empresaId ?? '').eq('status', 'aberta'), [empresaId])
+  const naoLidos = useContagem(uid ? consultaAvisos : null)
+  const abertas = useContagem(podeOperar && empresaId ? consultaAbertas : null)
+  const contadores: Record<string, number> = { '/avisos': naoLidos, '/incidentes': podeOperar ? abertas : 0 }
 
   const grupos: { titulo: string; itens: Item[] }[] = [
-    { titulo: 'Uso', itens: [{ para: '/reservar', icone: 'reservar', rotulo: 'Reservar' }, { para: '/reservas', icone: 'reservas', rotulo: 'Minhas reservas' }, { para: '/meus-documentos', icone: 'documentos', rotulo: 'Meus documentos' }] },
+    { titulo: 'Uso', itens: [{ para: '/avisos', icone: 'avisos', rotulo: 'Avisos' }, { para: '/reservar', icone: 'reservar', rotulo: 'Reservar' }, { para: '/reservas', icone: 'reservas', rotulo: 'Minhas reservas' }, { para: '/meus-documentos', icone: 'documentos', rotulo: 'Meus documentos' }] },
     {
       titulo: 'Operação',
       itens: [
         ...(podeAprovar ? [{ para: '/aprovacoes', icone: 'aprovacoes', rotulo: 'Aprovações' }] : []),
         ...(podeGerir ? [{ para: '/documentos', icone: 'documentos', rotulo: 'Documentos' }] : []),
+        ...(podeOperar ? [{ para: '/incidentes', icone: 'alerta', rotulo: 'Ocorrências' }] : []),
         ...(podeOperar ? [{ para: '/portaria', icone: 'portaria', rotulo: 'Portaria' }, { para: '/conferencia', icone: 'conferencia', rotulo: 'Conferência' }] : []),
       ],
     },
@@ -48,7 +58,11 @@ export function Layout() {
           {grupos.map((g) => (
             <div key={g.titulo} className="nav-grupo">
               <p className="nav-titulo">{g.titulo}</p>
-              {g.itens.map((i) => <NavLink key={i.para} to={i.para}><Icone nome={i.icone} />{i.rotulo}</NavLink>)}
+              {g.itens.map((i) => (
+                <NavLink key={i.para} to={i.para}><Icone nome={i.icone} />{i.rotulo}
+                  {contadores[i.para] > 0 && <span className={`contador${i.para === '/incidentes' ? ' urgente' : ''}`} aria-label={`${contadores[i.para]} novos`}>{contadores[i.para]}</span>}
+                </NavLink>
+              ))}
             </div>
           ))}
           <div className="nav-grupo nav-conta">

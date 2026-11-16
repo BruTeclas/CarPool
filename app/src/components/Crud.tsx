@@ -28,6 +28,8 @@ type Props = {
   semExcluir?: boolean
   versao?: number
   aoMudar?: () => void
+  /** Mostra só as linhas com a coluna vazia (nulo: true) ou preenchida (nulo: false). */
+  filtro?: { coluna: string; nulo: boolean }
 }
 
 const vazio = (campos: Campo[]) => Object.fromEntries(campos.map((c) => [c.nome, '']))
@@ -39,7 +41,7 @@ function exibir(campo: Campo, valor: unknown): string {
   return String(valor)
 }
 
-export function Crud({ titulo, tabela, campos, ordem, podeEditar, semCriar, semExcluir, versao = 0, aoMudar }: Props) {
+export function Crud({ titulo, tabela, campos, ordem, podeEditar, semCriar, semExcluir, versao = 0, aoMudar, filtro }: Props) {
   const { empresaId } = useEmpresa()
   const [linhas, setLinhas] = useState<Linha[]>([])
   const [form, setForm] = useState<Record<string, string>>(() => vazio(campos))
@@ -48,10 +50,12 @@ export function Crud({ titulo, tabela, campos, ordem, podeEditar, semCriar, semE
 
   const carregar = useCallback(async () => {
     if (!empresaId) return
-    const { data, error } = await supabase.from(tabela).select('*').eq('empresa_id', empresaId).order(ordem)
+    let q = supabase.from(tabela).select('*').eq('empresa_id', empresaId)
+    if (filtro) q = filtro.nulo ? q.is(filtro.coluna, null) : q.not(filtro.coluna, 'is', null)
+    const { data, error } = await q.order(ordem)
     if (error) setErro('Não foi possível carregar a lista.')
     else setLinhas((data ?? []) as Linha[])
-  }, [empresaId, tabela, ordem])
+  }, [empresaId, tabela, ordem, filtro?.coluna, filtro?.nulo])
 
   useEffect(() => { void carregar() }, [carregar, versao])
 

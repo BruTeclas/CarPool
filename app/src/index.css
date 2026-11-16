@@ -191,3 +191,29 @@ body:has(.sincronia) main { padding-bottom: 150px; }
 .s-doc-aprovado { background: var(--ok-leve); color: var(--ok); }
 .s-doc-pendente { background: var(--atencao-leve); color: var(--atencao); }
 .s-doc-recusado, .s-doc-faltando, .s-doc-vencido { background: var(--perigo-leve); color: var(--perigo); }
+
+/* Sprint 5 · avisos, ocorrências e troca de veículo */
+.contador { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--acao); color: #fff; font-size: .75rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.contador.urgente { background: var(--perigo); }
+.botao.sos, a.botao.perigo { background: var(--perigo); color: #fff; }
+.botao.sos:hover, a.botao.perigo:hover { filter: brightness(1.08); text-decoration: none; }
+.botao.pequeno { padding: 6px 12px; font-size: .85rem; }
+.sos-fixo { position: sticky; bottom: 16px; z-index: 5; margin-top: 18px; }
+.sos-fixo .botao { width: 100%; justify-content: center; font-size: 1.05rem; padding: 14px 20px; box-shadow: 0 6px 20px rgba(209, 42, 32, .28); }
+.aviso.destaque { background: var(--atencao-leve); }
+.emergencia { border: 2px solid var(--perigo); }
+.emergencia h2 { color: var(--perigo); }
+.opcoes-ocorrencia { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.opcao { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--linha); background: var(--folha); color: var(--texto); }
+.opcao small { color: var(--suave); font-weight: 400; }
+.opcao.escolhida { border-color: var(--acao); box-shadow: 0 0 0 3px var(--acao-leve); }
+.assistencia { background: var(--neutro); border-radius: 14px; padding: 14px 16px; }
+.incidente.grave { border-left: 4px solid var(--perigo); padding-left: 14px; }
+.miniaturas { display: flex; gap: 8px; flex-wrap: wrap; }
+.miniaturas img { width: 96px; height: 72px; object-fit: cover; border-radius: 10px; }
+.aviso-item { padding: 14px 0; border-bottom: 1px solid var(--linha); }
+.aviso-item:last-child { border-bottom: 0; }
+.aviso-item.novo strong { color: var(--acao); }
+.aviso-item.importante.novo { background: linear-gradient(90deg, var(--atencao-leve), transparent 60%); margin: 0 -24px; padding: 14px 24px; }
+.selo-novo { display: inline-block; margin-right: 8px; padding: 2px 8px; border-radius: 980px; background: var(--acao); color: #fff; font-size: .72rem; font-weight: 600; }
+.nota { color: var(--suave); font-size: .9rem; margin: -6px 4px 18px; }

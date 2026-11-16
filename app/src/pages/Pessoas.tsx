@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Crud } from '../components/Crud'
+import { Suspensoes } from '../components/Suspensoes'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeCadastro } from '../lib/erros-banco'
 import { useOpcoes } from '../lib/opcoes'
@@ -133,6 +134,7 @@ export default function Pessoas() {
           { nome: 'validade', rotulo: 'Validade', tipo: 'data', obrigatorio: true },
           { nome: 'ultima_revalidacao', rotulo: 'Última conferência', tipo: 'data' },
         ]} />
+      <Suspensoes />
     </main>
   )
 }

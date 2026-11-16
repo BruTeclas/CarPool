@@ -35,6 +35,14 @@ const MENSAGENS: Record<string, string> = {
   termo_ja_assinado: 'Você já assinou esse termo.',
   nome_obrigatorio: 'Escreva seu nome completo.',
   nao_autenticado: 'Sua sessão expirou. Entre novamente.',
+  usuario_suspenso: 'Suas reservas estão suspensas por faltas (não comparecimento ou atraso). Veja em Avisos até quando, ou fale com o gestor da frota.',
+  ocorrencia_fora_do_uso: 'A ocorrência só pode ser registrada enquanto o carro está com você.',
+  realocacao_encerrada: 'Essa troca de veículo não está mais disponível.',
+  veiculo_sugerido_ocupado: 'O carro sugerido acabou de ser reservado. Atualize a página.',
+  realocacao_nao_encontrada: 'Troca de veículo não encontrada.',
+  ocorrencia_nao_encontrada: 'Ocorrência não encontrada.',
+  ocorrencia_ja_encerrada: 'Essa ocorrência já foi encerrada.',
+  local_obrigatorio: 'Informe onde o carro está agora.',
 }
 
 export function mensagemDeErro(erro: { message?: string } | null | undefined): string {

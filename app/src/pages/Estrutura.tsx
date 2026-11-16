@@ -26,6 +26,15 @@ export default function Estrutura() {
           { nome: 'codigo', rotulo: 'Código da vaga', obrigatorio: true },
           { nome: 'base_id', rotulo: 'Base', tipo: 'selecao', opcoes: bases, obrigatorio: true },
         ]} />
+      <Crud titulo="Assistência padrão (seguradora e guincho)" tabela="contatos_assistencia" ordem="criado_em" podeEditar={podeGerir}
+        filtro={{ coluna: 'veiculo_id', nulo: true }}
+        campos={[
+          { nome: 'seguradora', rotulo: 'Seguradora ou empresa de assistência' },
+          { nome: 'apolice', rotulo: 'Número da apólice' },
+          { nome: 'telefone_assistencia', rotulo: 'Telefone da assistência (guincho)', obrigatorio: true },
+          { nome: 'observacao', rotulo: 'Observação' },
+        ]} />
+      <p className="nota">Esse contato aparece para o motorista no botão de pane ou acidente. Para um carro com seguro diferente, cadastre na Frota.</p>
     </main>
   )
 }

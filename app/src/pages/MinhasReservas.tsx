@@ -48,7 +48,10 @@ export default function MinhasReservas() {
                   <td>{formatarDataHora(r.inicio)}</td>
                   <td>{formatarDataHora(r.fim)}</td>
                   <td><Situacao status={r.status} /></td>
-                  <td className="acoes"><Link to={`/reservas/${r.id}`}>Ver detalhes</Link></td>
+                  <td className="acoes">
+                    <Link to={`/reservas/${r.id}`}>Ver detalhes</Link>
+                    {(r.status === 'em_uso' || r.status === 'atrasada') && <Link className="botao sos pequeno" to={`/reservas/${r.id}/ocorrencia`}>Pane ou acidente</Link>}
+                  </td>
                 </tr>
               ))}
             </tbody>

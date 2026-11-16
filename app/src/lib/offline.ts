@@ -2,6 +2,7 @@ import { sha256Hex, subirFoto } from './fotos'
 import type { FotoDaVistoria } from './fotos'
 import { enfileirar, guardar, ler, lerFila, removerDaFila } from './local'
 import { supabase } from './supabase'
+import type { OcorrenciaPendente } from './ocorrencias'
 
 export type ItemChecklist = { item: string; critico: boolean; ordem: number }
 export type ReservaLocal = {
@@ -18,6 +19,7 @@ type Pendente =
     tipo: 'vistoria'; reserva: string; empresa: string; vistoria: 'saida' | 'chegada'; odometro: number; combustivel: number
     itens: { item: string; ok: boolean; observacao: string }[]; fotos: FotoDaVistoria[]; observacoes: string; avarias: string[]
   }
+  | OcorrenciaPendente
 export type VistoriaPendente = Extract<Pendente, { tipo: 'vistoria' }>
 
 /** Erro de rede (sem sinal), em oposição a uma recusa do servidor. */
@@ -30,7 +32,11 @@ export function semSinal(erro?: { message?: string } | null): boolean {
 export async function baixarPacote(): Promise<void> {
   if (!navigator.onLine) return
   const { data, error } = await supabase.rpc('minhas_reservas_offline')
-  if (!error && Array.isArray(data)) await guardar('reservas', data)
+  if (!error && Array.isArray(data)) {
+    await guardar('reservas', data)
+    const empresa = (data[0] as ReservaLocal | undefined)?.empresa_id
+    if (empresa) await (await import('./ocorrencias')).baixarAssistencia(empresa)
+  }
 }
 
 export async function reservasLocais(): Promise<ReservaLocal[]> {
@@ -94,6 +100,16 @@ export async function sincronizar(): Promise<{ enviados: number; problemas: stri
         if (error && semSinal(error)) break
         const r = (data as Leitura | null)?.resultado
         if (error || (r !== 'chave_certa' && r !== 'devolucao')) resultado.problemas.push('Uma retirada feita sem sinal não foi aceita pelo sistema. Fale com o gestor da frota.')
+      } else if (item.tipo === 'ocorrencia') {
+        try {
+          const { enviarOcorrencia } = await import('./ocorrencias')
+          const { error } = await enviarOcorrencia(item)
+          if (error && semSinal(error)) break
+          if (error) resultado.problemas.push('Uma ocorrência registrada sem sinal não foi aceita pelo sistema. Ligue para o gestor da frota.')
+        } catch (e) {
+          if (semSinal(e as Error)) break
+          resultado.problemas.push('Não foi possível enviar as fotos de uma ocorrência registrada sem sinal. Ligue para o gestor da frota.')
+        }
       } else {
         try {
           const fotos = []

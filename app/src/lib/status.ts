@@ -4,6 +4,7 @@ const ROTULOS: Record<string, string> = {
   liberada: 'Chave liberada',
   em_uso: 'Em uso',
   atrasada: 'Atrasada',
+  ocorrencia: 'Pane ou acidente',
   devolvida: 'Devolvida',
   encerrada: 'Encerrada',
   no_show: 'Não retirada',

@@ -23,6 +23,9 @@ import Portaria from './pages/Portaria'
 import ReservaDetalhe from './pages/ReservaDetalhe'
 import Reservar from './pages/Reservar'
 import Termos from './pages/Termos'
+import Avisos from './pages/Avisos'
+import Incidentes from './pages/Incidentes'
+import Ocorrencia from './pages/Ocorrencia'
 import Vistoria from './pages/Vistoria'
 
 export default function App() {
@@ -39,6 +42,9 @@ export default function App() {
               <Route path="/reservar" element={<Reservar />} />
               <Route path="/reservas" element={<MinhasReservas />} />
               <Route path="/reservas/:id" element={<ReservaDetalhe />} />
+              <Route path="/reservas/:id/ocorrencia" element={<Ocorrencia />} />
+              <Route path="/avisos" element={<Avisos />} />
+              <Route path="/incidentes" element={<Incidentes />} />
               <Route path="/reservas/:id/vistoria/:tipo" element={<Vistoria />} />
               <Route path="/portaria" element={<Portaria />} />
               <Route path="/conferencia" element={<Conferencia />} />
