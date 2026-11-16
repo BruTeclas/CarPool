@@ -40,6 +40,7 @@ export default function Reservar() {
   const [categoriaId, setCategoriaId] = useState('')
   const [finalidade, setFinalidade] = useState('')
   const [destino, setDestino] = useState('')
+  const [centro, setCentro] = useState(() => { try { return localStorage.getItem('carpool.centro_de_custo') ?? '' } catch { return '' } })
   const [livres, setLivres] = useState<Livre[] | null>(null)
   const [alternativas, setAlternativas] = useState<Horario[]>([])
   const [mensagem, setMensagem] = useState<Mensagem | null>(null)
@@ -110,7 +111,13 @@ export default function Reservar() {
     if (error) return setMensagem({ texto: mensagemDeErro(error), erro: true })
     const lista = (data as Livre[]) ?? []
     setLivres(lista)
-    if (lista.length === 0) await sugerir(ini, f)
+    if (lista.length === 0) {
+      // demanda não atendida: alimenta o relatório "a frota é suficiente?"
+      void supabase.rpc('registrar_demanda_nao_atendida', {
+        p_empresa: empresaId, p_inicio: paraInstante(ini), p_fim: paraInstante(f), p_categoria: categoriaId || null,
+      })
+      await sugerir(ini, f)
+    }
   }
 
   async function reservar(veiculoId: string | null) {
@@ -119,7 +126,9 @@ export default function Reservar() {
     const comum = {
       p_inicio: paraInstante(inicio), p_fim: paraInstante(fim),
       p_finalidade: finalidade.trim() || null, p_destino: destino.trim() || null,
+      p_centro_de_custo: centro.trim() || null,
     }
+    try { localStorage.setItem('carpool.centro_de_custo', centro.trim()) } catch { /* sem armazenamento local */ }
     const { data, error } = veiculoId
       ? await supabase.rpc('criar_reserva', { p_veiculo: veiculoId, ...comum })
       : await supabase.rpc('criar_reserva_por_categoria', { p_categoria: categoriaId, ...comum })
@@ -233,6 +242,9 @@ export default function Reservar() {
           </label>
           <label>Destino (opcional)
             <input value={destino} onChange={(e) => setDestino(e.target.value)} />
+          </label>
+          <label>Centro de custo (opcional)
+            <input value={centro} onChange={(e) => setCentro(e.target.value)} placeholder="Ex.: Comercial, CC-120" />
           </label>
           <div className="acoes"><button type="submit" disabled={ocupado}>Ver disponibilidade</button></div>
         </form>

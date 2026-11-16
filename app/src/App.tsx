@@ -24,6 +24,8 @@ import ReservaDetalhe from './pages/ReservaDetalhe'
 import Reservar from './pages/Reservar'
 import Termos from './pages/Termos'
 import Avisos from './pages/Avisos'
+import Central from './pages/Central'
+import Relatorios from './pages/Relatorios'
 import Incidentes from './pages/Incidentes'
 import Ocorrencia from './pages/Ocorrencia'
 import Vistoria from './pages/Vistoria'
@@ -37,6 +39,7 @@ export default function App() {
           <Route path="/entrar" element={<Entrar />} />
           <Route path="/k/:codigo" element={<Chave />} />
           <Route element={<RotaProtegida />}>
+            <Route path="/central" element={<EmpresaProvider><Central /></EmpresaProvider>} />
             <Route element={<EmpresaProvider><Layout /></EmpresaProvider>}>
               <Route path="/" element={<MeuPerfil />} />
               <Route path="/reservar" element={<Reservar />} />
@@ -45,6 +48,7 @@ export default function App() {
               <Route path="/reservas/:id/ocorrencia" element={<Ocorrencia />} />
               <Route path="/avisos" element={<Avisos />} />
               <Route path="/incidentes" element={<Incidentes />} />
+              <Route path="/relatorios" element={<Relatorios />} />
               <Route path="/reservas/:id/vistoria/:tipo" element={<Vistoria />} />
               <Route path="/portaria" element={<Portaria />} />
               <Route path="/conferencia" element={<Conferencia />} />

@@ -223,3 +223,53 @@ button.opcao.escolhida { background: var(--acao-leve); }
 button.sos { background: var(--perigo); color: #fff; }
 button.sos:hover:not(:disabled) { filter: brightness(1.08); background: var(--perigo); }
 button.grande { width: 100%; padding: 14px 20px; font-size: 1.05rem; }
+
+/* Sprint 6 · relatórios */
+.filtros { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+.filtros label { min-width: 150px; }
+.segmentos { display: inline-flex; background: var(--neutro); border-radius: 980px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+.segmentos button { background: transparent; color: var(--texto); padding: 7px 14px; }
+.segmentos button:hover { background: var(--neutro-forte); }
+.segmentos button.ativo { background: var(--folha); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+.diagnostico { background: var(--acao-leve); border-radius: 14px; padding: 16px 18px; font-size: 1.02rem; margin: 0 0 18px; max-width: none; }
+.indicadores { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.indicador { background: var(--folha); border-radius: var(--raio); box-shadow: var(--sombra); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+.indicador span { color: var(--suave); font-size: .85rem; font-weight: 500; }
+.indicador strong { font-size: 1.9rem; font-weight: 650; letter-spacing: -.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.indicador small { color: var(--suave); font-size: .82rem; }
+.barras { list-style: none; padding: 0; margin: 16px 0 18px; display: grid; gap: 10px; }
+.barras li { display: grid; grid-template-columns: minmax(150px, 220px) 1fr 64px; align-items: center; gap: 12px; }
+.barra-rotulo { display: flex; align-items: center; gap: 8px; font-size: .9rem; white-space: nowrap; overflow: hidden; }
+.barra-trilho { height: 12px; background: var(--neutro); border-radius: 6px; overflow: hidden; }
+.barra { display: block; height: 100%; background: var(--acao); border-radius: 0 4px 4px 0; min-width: 2px; }
+.barra-valor { text-align: right; font-variant-numeric: tabular-nums; font-size: .9rem; }
+@media (max-width: 640px) { .barras li { grid-template-columns: 1fr 56px; } .barra-rotulo { grid-column: 1 / -1; } }
+a.secundario-link { background: var(--neutro); color: var(--texto); }
+a.secundario-link:hover { background: var(--neutro-forte); }
+
+/* Sprint 6 · central da portaria (tablet ou TV) */
+.central { max-width: none; min-height: 100vh; padding: 28px clamp(16px, 3vw, 48px); background: var(--fundo); }
+.central-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+.central-topo h1 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.6rem); }
+.central-topo p { margin: 4px 0 0; color: var(--suave); text-transform: none; }
+.central-status { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.central-relogio { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.ao-vivo, .sem-sinal { font-size: .85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.ao-vivo { color: var(--ok); }
+.ao-vivo::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulsar 2s infinite; }
+.sem-sinal { color: var(--suave); }
+@keyframes pulsar { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .ao-vivo::before { animation: none; } }
+.central-alertas { display: grid; gap: 10px; margin-bottom: 22px; }
+.central-alerta { margin: 0; padding: 14px 18px; border-radius: 14px; background: var(--atencao-leve); font-size: clamp(1rem, 1.4vw, 1.25rem); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; max-width: none; }
+.central-alerta.grave { background: var(--perigo); color: #fff; }
+.central-alerta.leve { background: var(--neutro); }
+.central-colunas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.central-colunas section { background: var(--folha); border-radius: var(--raio); box-shadow: var(--sombra); padding: 18px 20px; }
+.central-colunas h2 { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 12px; font-size: clamp(1.15rem, 1.6vw, 1.5rem); }
+.central-colunas h2 span { color: var(--suave); font-variant-numeric: tabular-nums; }
+.central-colunas ul { list-style: none; padding: 0; margin: 0; }
+.central-linha { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; padding: 12px 0; border-top: 1px solid var(--linha); font-size: clamp(1rem, 1.3vw, 1.2rem); }
+.central-hora { font-weight: 600; font-variant-numeric: tabular-nums; grid-row: span 2; min-width: 4.5em; }
+.central-carro { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.central-pessoa { color: var(--suave); grid-column: 2; }

@@ -10,7 +10,7 @@ type Item = { para: string; rotulo: string; icone: string }
 
 export function Layout() {
   const { session } = useAuth()
-  const { empresaNome, podeGerir, podeAprovar, podeOperar, carregando, empresaId } = useEmpresa()
+  const { empresaNome, podeGerir, podeAprovar, podeOperar, podeVerRelatorios, carregando, empresaId } = useEmpresa()
   const [aberto, setAberto] = useState(false)
   const uid = session?.user.id
   const consultaAvisos = useCallback(() => supabase.from('notificacoes').select('id', { count: 'exact', head: true })
@@ -29,6 +29,7 @@ export function Layout() {
         ...(podeAprovar ? [{ para: '/aprovacoes', icone: 'aprovacoes', rotulo: 'Aprovações' }] : []),
         ...(podeGerir ? [{ para: '/documentos', icone: 'documentos', rotulo: 'Documentos' }] : []),
         ...(podeOperar ? [{ para: '/incidentes', icone: 'alerta', rotulo: 'Ocorrências' }] : []),
+        ...(podeVerRelatorios ? [{ para: '/relatorios', icone: 'relatorios', rotulo: 'Relatórios' }] : []),
         ...(podeOperar ? [{ para: '/portaria', icone: 'portaria', rotulo: 'Portaria' }, { para: '/conferencia', icone: 'conferencia', rotulo: 'Conferência' }] : []),
       ],
     },

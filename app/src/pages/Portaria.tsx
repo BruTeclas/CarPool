@@ -64,6 +64,7 @@ export default function Portaria() {
   return (
     <main>
       <h1>Portaria</h1>
+      <p><Link className="botao secundario-link" to="/central">Abrir a central da portaria (tablet ou TV)</Link></p>
       <section className="cartao" aria-label="Entregar chave">
         <h2>Entregar chave</h2>
         <form onSubmit={buscar} className="acoes">

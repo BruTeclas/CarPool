@@ -13,9 +13,10 @@ type Estado = {
   ehAdmin: boolean
   podeAprovar: boolean
   podeOperar: boolean
+  podeVerRelatorios: boolean
 }
 
-const inicial: Estado = { empresaId: null, empresaNome: '', perfis: [], carregando: true, podeGerir: false, ehAdmin: false, podeAprovar: false, podeOperar: false }
+const inicial: Estado = { empresaId: null, empresaNome: '', perfis: [], carregando: true, podeGerir: false, ehAdmin: false, podeAprovar: false, podeOperar: false, podeVerRelatorios: false }
 const Contexto = createContext<Estado>(inicial)
 
 type Vinculo = { empresa_id: string; perfil: Perfil; empresas: { nome: string } | null }
@@ -50,6 +51,7 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
       podeGerir: ehAdmin || perfis.includes('gestor_frota'),
       podeOperar: ehAdmin || perfis.includes('gestor_frota') || perfis.includes('gestor_base'),
       podeAprovar: ehAdmin || perfis.includes('gestor_frota') || perfis.includes('aprovador'),
+      podeVerRelatorios: ehAdmin || ['gestor_frota', 'gestor_base', 'financeiro'].some((p) => perfis.includes(p as Perfil)),
     }
   }, [vinculos])
 
