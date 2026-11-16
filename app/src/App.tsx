@@ -8,18 +8,21 @@ import Aprovacoes from './pages/Aprovacoes'
 import Chave from './pages/Chave'
 import Checklist from './pages/Checklist'
 import Conferencia from './pages/Conferencia'
+import Documentos from './pages/Documentos'
 import Entrar from './pages/Entrar'
 import Etiquetas from './pages/Etiquetas'
 import Estrutura from './pages/Estrutura'
 import Frota from './pages/Frota'
 import Grupos from './pages/Grupos'
 import MeuPerfil from './pages/MeuPerfil'
+import MeusDocumentos from './pages/MeusDocumentos'
 import MinhasReservas from './pages/MinhasReservas'
 import Pessoas from './pages/Pessoas'
 import Politicas from './pages/Politicas'
 import Portaria from './pages/Portaria'
 import ReservaDetalhe from './pages/ReservaDetalhe'
 import Reservar from './pages/Reservar'
+import Termos from './pages/Termos'
 import Vistoria from './pages/Vistoria'
 
 export default function App() {
@@ -41,6 +44,9 @@ export default function App() {
               <Route path="/conferencia" element={<Conferencia />} />
               <Route path="/etiquetas" element={<Etiquetas />} />
               <Route path="/checklist" element={<Checklist />} />
+              <Route path="/meus-documentos" element={<MeusDocumentos />} />
+              <Route path="/documentos" element={<Documentos />} />
+              <Route path="/termos" element={<Termos />} />
               <Route path="/aprovacoes" element={<Aprovacoes />} />
               <Route path="/frota" element={<Frota />} />
               <Route path="/estrutura" element={<Estrutura />} />

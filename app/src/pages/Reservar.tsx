@@ -2,7 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { Assinatura } from '../components/Assinatura'
 import { Veiculo } from '../components/Placa'
+import { subirArquivo } from '../lib/documentos'
+import { sha256Hex } from '../lib/fotos'
 import { formatarDataHora, paraCampo, paraInstante, sugestaoDeInicio } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
@@ -13,6 +16,7 @@ type Livre = { veiculo_id: string; placa: string; modelo: string }
 type Horario = { inicio: string; fim: string }
 type Pendente = { id: string; nome: string; versao: number; config: Record<string, number | boolean> }
 type Mensagem = { texto: string; erro: boolean; link?: boolean }
+type Pendencias = { termos: { id: string; titulo: string; versao: number; texto: string }[]; documentos: string[]; cnh: boolean }
 
 function regras(c: Pendente['config']): string[] {
   return [
@@ -40,11 +44,18 @@ export default function Reservar() {
   const [alternativas, setAlternativas] = useState<Horario[]>([])
   const [mensagem, setMensagem] = useState<Mensagem | null>(null)
   const [ocupado, setOcupado] = useState(false)
+  const [pendencias, setPendencias] = useState<Pendencias | null>(null)
+  const [nomeAssinante, setNomeAssinante] = useState('')
+  const [rubrica, setRubrica] = useState<Blob | null>(null)
 
   const carregarPendentes = useCallback(async () => {
     if (!empresaId) return
-    const { data } = await supabase.rpc('politicas_pendentes', { p_empresa: empresaId })
+    const [{ data }, p] = await Promise.all([
+      supabase.rpc('politicas_pendentes', { p_empresa: empresaId }),
+      supabase.rpc('pendencias_para_reservar', { p_empresa: empresaId }),
+    ])
     setPendentes((data as Pendente[]) ?? [])
+    setPendencias((p.data as Pendencias | null) ?? null)
   }, [empresaId])
 
   useEffect(() => { void carregarPendentes() }, [carregarPendentes])
@@ -55,6 +66,24 @@ export default function Reservar() {
       pendentes.map((p) => ({ empresa_id: empresaId, politica_id: p.id, user_id: session.user.id })),
     )
     if (error) setMensagem({ texto: 'Não foi possível registrar o aceite. Tente novamente.', erro: true })
+    await carregarPendentes()
+  }
+
+  async function assinar(termoId: string) {
+    if (!rubrica || !session || !empresaId) return
+    setMensagem(null)
+    setOcupado(true)
+    try {
+      const caminho = await subirArquivo(empresaId, session.user.id, rubrica, `assinatura-${termoId}.png`)
+      const { error } = await supabase.rpc('assinar_termo', {
+        p_termo: termoId, p_nome: nomeAssinante, p_assinatura_caminho: caminho, p_assinatura_sha256: await sha256Hex(rubrica),
+      })
+      if (error) setMensagem({ texto: mensagemDeErro(error), erro: true })
+      else { setRubrica(null); setNomeAssinante('') }
+    } catch {
+      setMensagem({ texto: 'Não foi possível enviar a assinatura. Verifique o sinal e tente de novo.', erro: true })
+    }
+    setOcupado(false)
     await carregarPendentes()
   }
 
@@ -101,7 +130,7 @@ export default function Reservar() {
         setLivres(null)
         await sugerir(inicio, fim, veiculoId ?? undefined)
       }
-      if (error.message.includes('politica_nao_aceita')) await carregarPendentes()
+      if (/politica_nao_aceita|termo_nao_assinado|documento_pendente/.test(error.message)) await carregarPendentes()
       return
     }
     const status = (data as { status: string }).status
@@ -136,6 +165,45 @@ export default function Reservar() {
           ))}
           {mensagem && <p role="alert" className="erro">{mensagem.texto}</p>}
           <button type="button" onClick={aceitar}>Li e aceito</button>
+        </section>
+      </main>
+    )
+  }
+
+  const termo = pendencias?.termos[0]
+  if (termo) {
+    return (
+      <main style={{ maxWidth: 720 }}>
+        <h1>Reservar veículo</h1>
+        <section className="cartao" aria-label="Termo de uso">
+          <h2>{termo.titulo}</h2>
+          <p>Leia e assine para poder reservar. Uma cópia fica guardada para você e para a empresa.</p>
+          <div className="texto-termo" tabIndex={0}>{termo.texto}</div>
+          <label>Seu nome completo
+            <input required value={nomeAssinante} onChange={(e) => setNomeAssinante(e.target.value)} autoComplete="name" />
+          </label>
+          <p style={{ margin: '14px 0 6px' }}>Assinatura</p>
+          <Assinatura key={termo.id} aoMudar={setRubrica} />
+          {mensagem && <p role="alert" className="erro">{mensagem.texto}</p>}
+          <p style={{ marginTop: 16 }}>
+            <button type="button" disabled={ocupado || !rubrica || nomeAssinante.trim().length < 3} onClick={() => assinar(termo.id)}>
+              {ocupado ? 'Registrando…' : 'Assinar o termo'}
+            </button>
+          </p>
+        </section>
+      </main>
+    )
+  }
+  if (pendencias && (pendencias.cnh || pendencias.documentos.length > 0)) {
+    const faltas = [...(pendencias.cnh ? ['CNH'] : []), ...pendencias.documentos]
+    return (
+      <main>
+        <h1>Reservar veículo</h1>
+        <section className="cartao" aria-label="Documentos pendentes">
+          <h2>Falta documento para liberar suas reservas</h2>
+          <p>Para reservar, você precisa ter estes documentos enviados, aprovados pelo gestor e dentro da validade:</p>
+          <ul>{faltas.map((f) => <li key={f}>{f}</li>)}</ul>
+          <p><Link className="botao" to="/meus-documentos">Abrir meus documentos</Link></p>
         </section>
       </main>
     )

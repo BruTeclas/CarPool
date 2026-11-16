@@ -13,11 +13,12 @@ export function Layout() {
   const [aberto, setAberto] = useState(false)
 
   const grupos: { titulo: string; itens: Item[] }[] = [
-    { titulo: 'Uso', itens: [{ para: '/reservar', icone: 'reservar', rotulo: 'Reservar' }, { para: '/reservas', icone: 'reservas', rotulo: 'Minhas reservas' }] },
+    { titulo: 'Uso', itens: [{ para: '/reservar', icone: 'reservar', rotulo: 'Reservar' }, { para: '/reservas', icone: 'reservas', rotulo: 'Minhas reservas' }, { para: '/meus-documentos', icone: 'documentos', rotulo: 'Meus documentos' }] },
     {
       titulo: 'Operação',
       itens: [
         ...(podeAprovar ? [{ para: '/aprovacoes', icone: 'aprovacoes', rotulo: 'Aprovações' }] : []),
+        ...(podeGerir ? [{ para: '/documentos', icone: 'documentos', rotulo: 'Documentos' }] : []),
         ...(podeOperar ? [{ para: '/portaria', icone: 'portaria', rotulo: 'Portaria' }, { para: '/conferencia', icone: 'conferencia', rotulo: 'Conferência' }] : []),
       ],
     },
@@ -28,7 +29,7 @@ export function Layout() {
         ...(podeOperar ? [{ para: '/etiquetas', icone: 'etiquetas', rotulo: 'Etiquetas das chaves' }] : []),
         ...(podeGerir ? [
           { para: '/estrutura', icone: 'estrutura', rotulo: 'Filiais e bases' }, { para: '/pessoas', icone: 'pessoas', rotulo: 'Pessoas' },
-          { para: '/grupos', icone: 'grupos', rotulo: 'Grupos' }, { para: '/checklist', icone: 'conferencia', rotulo: 'Checklist da vistoria' }, { para: '/politicas', icone: 'politicas', rotulo: 'Políticas de uso' },
+          { para: '/grupos', icone: 'grupos', rotulo: 'Grupos' }, { para: '/checklist', icone: 'conferencia', rotulo: 'Checklist da vistoria' }, { para: '/politicas', icone: 'politicas', rotulo: 'Políticas de uso' }, { para: '/termos', icone: 'termos', rotulo: 'Termos de uso' },
         ] : []),
       ],
     },

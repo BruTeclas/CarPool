@@ -23,6 +23,17 @@ const MENSAGENS: Record<string, string> = {
   sem_permissao: 'Você não tem permissão para essa ação.',
   veiculo_fora_da_sua_filial: 'Esse veículo é de uma filial à qual você não tem acesso.',
   motorista_sem_acesso_a_filial: 'Essa pessoa não tem acesso à filial desse veículo.',
+  termo_nao_assinado: 'Antes de reservar, é preciso assinar o termo de uso.',
+  documento_pendente: 'Há documento obrigatório faltando, vencido ou aguardando conferência. Veja em Meus documentos.',
+  veiculo_sem_documento: 'Esse veículo está com documento obrigatório vencido ou faltando.',
+  validade_obrigatoria: 'Informe a data de validade do documento.',
+  documento_vencido: 'A data de validade informada já passou.',
+  dados_da_cnh_obrigatorios: 'Informe o número e a categoria da CNH.',
+  arquivo_nao_encontrado: 'O arquivo não chegou ao servidor. Envie de novo.',
+  motivo_obrigatorio: 'Para recusar, escreva o motivo.',
+  documento_ja_conferido: 'Esse documento já foi conferido.',
+  termo_ja_assinado: 'Você já assinou esse termo.',
+  nome_obrigatorio: 'Escreva seu nome completo.',
   nao_autenticado: 'Sua sessão expirou. Entre novamente.',
 }
 
