@@ -42,6 +42,10 @@ const MENSAGENS: Record<string, string> = {
   realocacao_nao_encontrada: 'Troca de veículo não encontrada.',
   ocorrencia_nao_encontrada: 'Ocorrência não encontrada.',
   ocorrencia_ja_encerrada: 'Essa ocorrência já foi encerrada.',
+  pessoa_com_reserva_em_andamento: 'Essa pessoa tem reserva em andamento. Encerre ou cancele antes de remover os dados.',
+  nao_pode_anonimizar_a_si_mesmo: 'Você não pode remover os seus próprios dados por aqui. Peça a outro administrador.',
+  aviso_publicado_nao_muda: 'O texto de um aviso publicado não muda. Publique uma nova versão.',
+  aviso_nao_encontrado: 'Aviso de privacidade não encontrado.',
   local_obrigatorio: 'Informe onde o carro está agora.',
 }
 

@@ -136,10 +136,10 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 ### Sprint 7 · LGPD, segurança e publicação
 *Skills: `supabase`, `supabase-postgres-best-practices`, `web-design-guidelines`, `webapp-testing`.*
 
-- [ ] Aviso de privacidade configurável e registro de ciência.
-- [ ] Retenção configurável por tipo de dado, com rotina de anonimização e eliminação.
-- [ ] Exportação, correção e eliminação dos dados do titular.
-- [ ] Revisão de segurança (advisors do Supabase, policies, buckets, chaves) e revisão de acessibilidade.
+- [x] Aviso de privacidade configurável e registro de ciência: o administrador publica versões em `/privacidade` (com texto-modelo); cada pessoa lê e dá ciência no primeiro acesso depois de cada versão.
+- [x] Retenção configurável por tipo de dado (localização, fotos, documentos, desligados, avisos, auditoria), com rotina diária de anonimização e eliminação, inclusive dos arquivos no Storage.
+- [x] Exportação, correção e eliminação dos dados do titular: em Meu perfil a pessoa baixa seus dados (JSON), corrige o nome e faz pedidos; o administrador responde e pode remover os dados de uma pessoa.
+- [x] Revisão de segurança (advisors do Supabase, policies, buckets, chaves) e revisão de acessibilidade (axe, WCAG A/AA, tema claro e escuro: contrastes corrigidos). Resultado em `supabase/README.md`. Falta ligar no painel a proteção contra senhas vazadas.
 - [ ] Testes ponta a ponta do ciclo completo.
 - [ ] Escolha de hospedagem e domínio, publicação e backups.
 - [ ] Roteiro de implantação para o primeiro cliente (cadastro, etiquetas, treinamento).

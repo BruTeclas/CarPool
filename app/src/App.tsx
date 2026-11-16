@@ -19,6 +19,7 @@ import MeusDocumentos from './pages/MeusDocumentos'
 import MinhasReservas from './pages/MinhasReservas'
 import Pessoas from './pages/Pessoas'
 import Politicas from './pages/Politicas'
+import Privacidade from './pages/Privacidade'
 import Portaria from './pages/Portaria'
 import ReservaDetalhe from './pages/ReservaDetalhe'
 import Reservar from './pages/Reservar'
@@ -63,6 +64,7 @@ export default function App() {
               <Route path="/pessoas" element={<Pessoas />} />
               <Route path="/grupos" element={<Grupos />} />
               <Route path="/politicas" element={<Politicas />} />
+              <Route path="/privacidade" element={<Privacidade />} />
             </Route>
           </Route>
         </Routes>

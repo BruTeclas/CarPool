@@ -4,13 +4,14 @@ import { useAuth } from '../auth/AuthProvider'
 import { useContagem } from '../lib/avisos'
 import { useEmpresa } from '../lib/empresa'
 import { supabase } from '../lib/supabase'
+import { PortaoDePrivacidade } from './AvisoPrivacidade'
 import { Icone } from './Icone'
 
 type Item = { para: string; rotulo: string; icone: string }
 
 export function Layout() {
   const { session } = useAuth()
-  const { empresaNome, podeGerir, podeAprovar, podeOperar, podeVerRelatorios, carregando, empresaId } = useEmpresa()
+  const { empresaNome, ehAdmin, podeGerir, podeAprovar, podeOperar, podeVerRelatorios, carregando, empresaId } = useEmpresa()
   const [aberto, setAberto] = useState(false)
   const uid = session?.user.id
   const consultaAvisos = useCallback(() => supabase.from('notificacoes').select('id', { count: 'exact', head: true })
@@ -42,6 +43,7 @@ export function Layout() {
           { para: '/estrutura', icone: 'estrutura', rotulo: 'Filiais e bases' }, { para: '/pessoas', icone: 'pessoas', rotulo: 'Pessoas' },
           { para: '/grupos', icone: 'grupos', rotulo: 'Grupos' }, { para: '/checklist', icone: 'conferencia', rotulo: 'Checklist da vistoria' }, { para: '/politicas', icone: 'politicas', rotulo: 'Políticas de uso' }, { para: '/termos', icone: 'termos', rotulo: 'Termos de uso' },
         ] : []),
+        ...(ehAdmin ? [{ para: '/privacidade', icone: 'privacidade', rotulo: 'Privacidade e dados' }] : []),
       ],
     },
   ].filter((g) => g.itens.length > 0)
@@ -77,7 +79,7 @@ export function Layout() {
         {!carregando && !empresaId ? (
           <main><p role="alert" className="erro">Seu usuário ainda não está vinculado a nenhuma empresa. Fale com o administrador.</p></main>
         ) : (
-          <Outlet />
+          <PortaoDePrivacidade><Outlet /></PortaoDePrivacidade>
         )}
       </div>
     </div>

@@ -11,8 +11,25 @@ Ordem para recriar do zero: migrations → seed → tests.
 - `seed_frota.sql`: veículos, categorias e CNHs de desenvolvimento (rodar depois do `seed.sql`).
 - `tests/reservas.sql`: 14 verificações das regras de reserva. Termina com a exceção `OK_TESTES_PASSARAM` (isso é sucesso e desfaz os dados de teste).
 
-## Avisos esperados do advisor de segurança
-`criar_reserva`, `disponibilidade` e `transicionar_reserva` são `SECURITY DEFINER` e chamáveis por `authenticated` de propósito: são a única porta de escrita das reservas e cada uma valida `auth.uid()` e a empresa do usuário. A proteção contra senhas vazadas do Auth é uma opção do painel.
+## Revisão de segurança (Sprint 7, 16/11/2026)
+Advisors do Supabase rodados depois de todas as migrations. O que sobrou é esperado:
+
+- **Funções `SECURITY DEFINER` chamáveis por `authenticated`** (32): são a porta de escrita das regras de negócio (reserva, vistoria, documentos, ocorrência, LGPD). Cada uma confere `auth.uid()`, a empresa e o perfil antes de agir, e todas têm `search_path = ''`.
+- **`ficha_veiculo` chamável por `anon`**: de propósito. É a ficha pública da etiqueta QR da chave (`/k/:codigo`) e devolve só placa, modelo e situação.
+- **`arquivos_a_apagar` com RLS e sem policy**: de propósito. Só a função `limpar-arquivos` (service role) lê a fila.
+- **`pg_net` no schema `public`**: a extensão não pode ser movida depois de instalada; não expõe dados.
+- **Proteção contra senhas vazadas**: opção do painel (Authentication → Policies). Ligar antes do piloto.
+- **Várias policies permissivas** (14 tabelas, `*_select` + `*_write`): mantidas. Separar o `*_write` em insert/update/delete muda a visibilidade em tabelas filtradas por filial; o ganho é desprezível no tamanho de frota do produto.
+- **Índices sem uso**: o banco ainda não tem uso real; reavaliar no piloto.
+
+Buckets `vistorias` e `documentos` são privados, com limite de tamanho (5 e 10 MB) e só imagens/PDF.
+
+## LGPD (Sprint 7)
+- Aviso de privacidade com versões (`avisos_privacidade`); o texto publicado não muda. Cada pessoa dá ciência no primeiro acesso depois de cada versão (`ciencias_privacidade`, só inclusão).
+- Titular: `meus_dados` (exporta tudo em JSON), `atualizar_meu_nome`, `pedir_ao_controlador` (correção, exclusão ou outro; avisa os administradores). O administrador responde com `responder_solicitacao`.
+- `anonimizar_pessoa`: troca o nome por "Pessoa removida", apaga CNH, documentos, avisos, grupos e localização, encerra a conta no Auth; o histórico de reservas fica. Bloqueia com reserva em andamento, a si mesmo e o último administrador.
+- Prazos de guarda por empresa (`empresas.retencao_*`). A rotina `carpool-lgpd` (diária, 06:23 UTC) apaga localização, fotos, documentos substituídos, avisos lidos e auditoria vencidos e anonimiza quem está desligado há mais tempo que o prazo. Arquivos vão para `arquivos_a_apagar`, e a `carpool-limpeza-arquivos` (06:53 UTC) chama a função `limpar-arquivos`, que apaga do Storage.
+- Teste: `tests/lgpd.sql`.
 
 ## Primeiro usuário em produção
 O banco não tem usuários de teste. Para liberar o primeiro acesso:
