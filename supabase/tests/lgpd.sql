@@ -4,19 +4,19 @@ do $$
 declare
   zero constant uuid := '00000000-0000-0000-0000-000000000000';
   e uuid := gen_random_uuid(); uni uuid := gen_random_uuid(); b uuid := gen_random_uuid(); cat uuid := gen_random_uuid();
-  c1 uuid := gen_random_uuid(); adm uuid := gen_random_uuid(); mot uuid := gen_random_uuid(); ex uuid := gen_random_uuid();
+  c1 uuid := gen_random_uuid(); adm uuid := gen_random_uuid(); mot uuid := gen_random_uuid(); ex uuid := gen_random_uuid(); adm2 uuid := gen_random_uuid();
   r1 uuid := gen_random_uuid(); r2 uuid := gen_random_uuid(); vi uuid := gen_random_uuid(); av uuid; sol uuid; t_cnh uuid;
   j jsonb; n int; msg text;
 begin
   insert into auth.users (id, instance_id, aud, role, email)
-  select u, zero, 'authenticated', 'authenticated', 't7-' || u || '@teste.invalid' from unnest(array[adm, mot, ex]) u;
+  select u, zero, 'authenticated', 'authenticated', 't7-' || u || '@teste.invalid' from unnest(array[adm, mot, ex, adm2]) u;
   insert into public.empresas (id, nome) values (e, 'Teste LGPD');
   insert into public.unidades (id, empresa_id, nome) values (uni, e, 'U');
   insert into public.bases (id, empresa_id, unidade_id, nome) values (b, e, uni, 'Pátio');
   insert into public.categorias (id, empresa_id, nome) values (cat, e, 'Hatch');
   insert into public.veiculos (id, empresa_id, base_id, categoria_id, placa, modelo) values (c1, e, b, cat, 'LGP0001', 'Um');
   insert into public.membros (empresa_id, user_id, perfil, nome) values
-    (e, adm, 'admin', 'Adm'), (e, mot, 'motorista', 'Motorista Ativo'), (e, ex, 'motorista', 'Ex Colaborador');
+    (e, adm, 'admin', 'Adm'), (e, adm2, 'admin', 'Adm Dois'), (e, mot, 'motorista', 'Motorista Ativo'), (e, ex, 'motorista', 'Ex Colaborador');
   insert into public.cnhs (empresa_id, user_id, numero, categoria, validade) values (e, mot, '1', 'B', current_date + 300), (e, ex, '2', 'B', current_date + 300);
   select id into t_cnh from public.tipos_de_documento where empresa_id = e and e_cnh;
   insert into public.documentos (empresa_id, tipo_id, user_id, validade, caminho, status, enviado_em) values
@@ -80,7 +80,7 @@ begin
   if not exists (select 1 from public.reservas where id = r2) then raise exception 'FALHOU 3g: histórico apagado'; end if;
 
   -- 4. Rotina de retenção
-  update public.membros set ativo = false where user_id = adm; -- vira ex-colaborador...
+  update public.membros set ativo = false where user_id = adm; -- vira ex-colaborador (adm2 segue como admin)...
   update public.membros set inativado_em = now() - interval '400 days' where user_id = adm; -- ...há mais de 365 dias
   perform app.rotina_lgpd();
   if exists (select 1 from public.fotos where vistoria_id = vi) then raise exception 'FALHOU 4: foto de 800 dias ficou'; end if;
