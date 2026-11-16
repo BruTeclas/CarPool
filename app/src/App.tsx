@@ -8,6 +8,10 @@ import Aprovacoes from './pages/Aprovacoes'
 import Chave from './pages/Chave'
 import Checklist from './pages/Checklist'
 import Comunicados from './pages/Comunicados'
+import FazerTreinamento from './pages/FazerTreinamento'
+import MeusTreinamentos from './pages/MeusTreinamentos'
+import TreinamentoEditor from './pages/TreinamentoEditor'
+import Treinamentos from './pages/Treinamentos'
 import Conferencia from './pages/Conferencia'
 import Documentos from './pages/Documentos'
 import Entrar from './pages/Entrar'
@@ -51,6 +55,10 @@ export default function App() {
               <Route path="/avisos" element={<Avisos />} />
               <Route path="/incidentes" element={<Incidentes />} />
               <Route path="/comunicados" element={<Comunicados />} />
+              <Route path="/meus-treinamentos" element={<MeusTreinamentos />} />
+              <Route path="/meus-treinamentos/:id" element={<FazerTreinamento />} />
+              <Route path="/treinamentos" element={<Treinamentos />} />
+              <Route path="/treinamentos/:id" element={<TreinamentoEditor />} />
               <Route path="/relatorios" element={<Relatorios />} />
               <Route path="/reservas/:id/vistoria/:tipo" element={<Vistoria />} />
               <Route path="/portaria" element={<Portaria />} />

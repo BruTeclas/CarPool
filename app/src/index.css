@@ -33,7 +33,7 @@ h1 { font-size: 2rem; font-weight: 700; line-height: 1.12; letter-spacing: -.028
 h2 { font-size: 1.2rem; font-weight: 600; line-height: 1.25; letter-spacing: -.018em; margin-bottom: 14px; }
 h3 { font-size: 1rem; font-weight: 600; letter-spacing: -.012em; grid-column: 1 / -1; }
 p { margin: 0 0 12px; max-width: 70ch; }
-a { color: var(--acao); text-decoration: none; }
+a { color: var(--acao-forte); text-decoration: none; }
 :is(p, td, li) > a:not(.botao) { text-decoration: underline; text-underline-offset: 2px; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 ul, ol { padding-left: 20px; margin: 0 0 12px; }
@@ -291,3 +291,38 @@ a.botao.secundario-link:hover { background: var(--neutro-forte); }
 .opcoes-linha label { display: inline-flex; flex-direction: row; align-items: center; gap: 6px; font-weight: 400; }
 fieldset { border: 1px solid var(--linha); border-radius: 14px; padding: 12px 16px 14px; margin: 0; display: grid; gap: 8px; min-width: 0; }
 legend { font-weight: 600; padding: 0 6px; color: var(--texto); }
+
+/* Treinamentos */
+.versao { font-size: 1rem; font-weight: 500; color: var(--suave); }
+.video-quadro { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 14px; overflow: hidden; }
+.video-quadro video, .video-quadro iframe, .video-yt { width: 100%; height: 100%; display: block; }
+.video-controles { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 12px 0; }
+.video-tempo { font-variant-numeric: tabular-nums; color: var(--suave); }
+.cronometro { display: grid; gap: 6px; margin: 10px 0; }
+.cronometro .barra-trilho { height: 8px; border-radius: 99px; background: var(--neutro); overflow: hidden; }
+.cronometro .barra-valor { height: 100%; background: var(--ok); border-radius: 99px; transition: width .4s; }
+.cronometro-fixo { position: sticky; bottom: 0; background: var(--folha); padding: 8px 0 4px; border-top: 1px solid var(--linha); }
+.leitura { max-height: 65vh; overflow-y: auto; padding: 4px 4px 0; }
+.leitor-pdf { max-height: 70vh; overflow-y: auto; background: var(--neutro); border-radius: 12px; padding: 12px; }
+.leitor-paginas { display: grid; gap: 12px; justify-items: center; }
+.leitor-paginas canvas { max-width: 100%; height: auto !important; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .15); }
+.leitor-fim { text-align: center; color: var(--suave); font-size: .85rem; padding: 16px 0 8px; }
+.treinamento-grade { display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .treinamento-grade { grid-template-columns: 1fr; } }
+.etapas-nav ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.etapa-item { width: 100%; display: flex; gap: 10px; align-items: flex-start; text-align: left; background: transparent; color: var(--texto); padding: 8px 10px; border-radius: 12px; font-weight: 400; }
+.etapa-item:hover:not(:disabled) { background: var(--neutro); }
+.etapa-item.atual { background: var(--acao-leve); }
+.etapa-item:disabled { opacity: .6; }
+.etapa-item small { display: block; color: var(--suave); }
+.etapa-item.atual small { color: var(--texto); }
+.etapa-marca { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: .78rem; font-weight: 600; background: var(--neutro); }
+.etapa-marca.ok { background: var(--ok-leve); color: var(--ok); }
+.lista-etapas, .lista-perguntas { display: grid; gap: 10px; padding-left: 20px; }
+.lista-etapas li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; }
+.lista-etapas li > div:first-child { display: grid; }
+.alternativa-linha { display: flex; gap: 8px; align-items: center; }
+.alternativa-linha input:not([type]) , .alternativa-linha input[type=text] { flex: 1; }
+.prova { display: grid; gap: 16px; padding-left: 20px; }
+.resposta-escrita { white-space: pre-wrap; background: var(--neutro); border-radius: 10px; padding: 10px 12px; }
+a.botao.pequeno { padding: 6px 12px; font-size: .85rem; }

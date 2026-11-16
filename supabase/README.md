@@ -39,6 +39,14 @@ Buckets `vistorias` e `documentos` são privados, com limite de tamanho (5 e 10 
 - Imagens no bucket privado `comunicados` (5 MB, só imagens), caminho `<empresa>/<arquivo>`.
 - Teste: `tests/comunicados.sql`.
 
+## Treinamentos (Sprint 8, parte 2)
+- Gestão (admin e gestor de frota, direto nas tabelas): `treinamentos` (versões ligadas por `familia_id`), `treinamento_etapas`, `treinamento_perguntas`, `treinamento_alternativas`. Enquanto rascunho, tudo muda; `publicar_treinamento` confere etapas e gabarito e congela. `nova_versao_treinamento` copia tudo.
+- O colaborador nunca lê o gabarito: usa `meus_treinamentos`, `conteudo_treinamento`, `iniciar_prova` (prova sorteada, sem a resposta certa) e `enviar_prova`.
+- Telemetria: `sinal_etapa` a cada ~5 s credita no máximo o tempo real decorrido, só trecho novo do vídeo (barrando adiantar e velocidade acima de 1x) e guarda como "pendente"; `confirmar_presenca` ("Você está aí?") transforma o pendente em tempo válido, desde que a confirmação anterior tenha menos de 6 minutos. A etapa conclui no tempo mínimo (texto e PDF também precisam chegar ao fim).
+- Prova: várias certas só pontua acertando todas; acabando as tentativas, `ciclo` sobe e o conteúdo é refeito. Resposta escrita fica "aguardando correção" até `corrigir_prova`.
+- Arquivos no bucket privado `treinamentos` (50 MB, MP4, WebM e PDF), caminho `<empresa>/<treinamento>/<arquivo>`.
+- Teste: `tests/treinamentos.sql`.
+
 ## Primeiro usuário em produção
 O banco não tem usuários de teste. Para liberar o primeiro acesso:
 1. Crie o usuário em Authentication → Users (marque "Auto Confirm User").

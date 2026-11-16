@@ -24,7 +24,7 @@ export function Layout() {
   const contadores: Record<string, number> = { '/avisos': naoLidos, '/incidentes': podeOperar ? abertas : 0 }
 
   const grupos: { titulo: string; itens: Item[] }[] = [
-    { titulo: 'Uso', itens: [{ para: '/avisos', icone: 'avisos', rotulo: 'Avisos' }, { para: '/reservar', icone: 'reservar', rotulo: 'Reservar' }, { para: '/reservas', icone: 'reservas', rotulo: 'Minhas reservas' }, { para: '/meus-documentos', icone: 'documentos', rotulo: 'Meus documentos' }] },
+    { titulo: 'Uso', itens: [{ para: '/avisos', icone: 'avisos', rotulo: 'Avisos' }, { para: '/reservar', icone: 'reservar', rotulo: 'Reservar' }, { para: '/reservas', icone: 'reservas', rotulo: 'Minhas reservas' }, { para: '/meus-documentos', icone: 'documentos', rotulo: 'Meus documentos' }, { para: '/meus-treinamentos', icone: 'treinamentos', rotulo: 'Meus treinamentos' }] },
     {
       titulo: 'Operação',
       itens: [
@@ -43,6 +43,7 @@ export function Layout() {
         ...(podeGerir ? [
           { para: '/estrutura', icone: 'estrutura', rotulo: 'Filiais e bases' }, { para: '/pessoas', icone: 'pessoas', rotulo: 'Pessoas' },
           { para: '/grupos', icone: 'grupos', rotulo: 'Grupos' }, { para: '/checklist', icone: 'conferencia', rotulo: 'Checklist da vistoria' }, { para: '/politicas', icone: 'politicas', rotulo: 'Políticas de uso' }, { para: '/termos', icone: 'termos', rotulo: 'Termos de uso' },
+          { para: '/treinamentos', icone: 'treinamentos', rotulo: 'Treinamentos' },
         ] : []),
         ...(ehAdmin ? [{ para: '/privacidade', icone: 'privacidade', rotulo: 'Privacidade e dados' }] : []),
       ],

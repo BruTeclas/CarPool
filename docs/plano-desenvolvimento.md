@@ -159,9 +159,11 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [ ] Push no celular com o app fechado: entra junto com o item "Envio de e-mail e push".
 
 **Parte 2 · Treinamentos**
-- [ ] Modelos de treinamento com etapas em ordem: vídeo do YouTube (não listado), vídeo enviado (até 50 MB), texto e PDF, cada uma com tempo mínimo.
-- [ ] Telemetria rígida: sem adiantar, velocidade 1x, pausa ao sair da tela, "Você está aí?" e conferência do tempo no servidor.
-- [ ] Prova com múltipla escolha (uma ou várias certas), verdadeiro ou falso e resposta escrita (corrigida pelo gestor); nota mínima, tentativas limitadas e embaralhamento.
+- [x] Modelos de treinamento com etapas em ordem: vídeo do YouTube (não listado), vídeo enviado (até 50 MB), texto e PDF (aberto dentro do app), cada uma com tempo mínimo. A duração do vídeo é lida sozinha.
+- [x] Telemetria rígida: sem adiantar, velocidade 1x, pausa ao sair da tela, "Você está aí?" a cada 2 a 5 minutos (30 s para responder) e conferência do tempo no servidor; texto e PDF só concluem lidos até o fim.
+- [x] Prova com múltipla escolha (uma ou várias certas), verdadeiro ou falso e resposta escrita (corrigida pelo gestor); nota mínima, tentativas limitadas (acabando, refaz o conteúdo) e embaralhamento.
+- [x] Publicado não muda: nova versão copia tudo como rascunho e, ao ser publicada, tira a anterior do ar.
+- [ ] Testar o vídeo do YouTube no site publicado (a rede do ambiente de testes bloqueia o YouTube; o vídeo enviado foi testado).
 
 **Parte 3 · Bloqueios e resultados**
 - [ ] Público por perfil, grupo e filial; validade (reciclagem) com aviso 30 dias antes; prazo para quem já estava cadastrado.
