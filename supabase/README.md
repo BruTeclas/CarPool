@@ -31,6 +31,14 @@ Buckets `vistorias` e `documentos` são privados, com limite de tamanho (5 e 10 
 - Prazos de guarda por empresa (`empresas.retencao_*`). A rotina `carpool-lgpd` (diária, 06:23 UTC) apaga localização, fotos, documentos substituídos, avisos lidos e auditoria vencidos e anonimiza quem está desligado há mais tempo que o prazo. Arquivos vão para `arquivos_a_apagar`, e a `carpool-limpeza-arquivos` (06:53 UTC) chama a função `limpar-arquivos`, que apaga do Storage.
 - Teste: `tests/lgpd.sql`.
 
+## Comunicados (Sprint 8, parte 1)
+- `comunicados`: o gestor insere direto (RLS: admin e gestor de frota em toda a empresa; gestor de base só com `unidade_id` de uma filial dele). Depois de inserido só muda `encerrado_em`.
+- `comunicado_leituras`: uma linha por pessoa e por repetição (`ocorrencia` = data em que a repetição começou). Só as funções escrevem.
+- `app.comunicado_ocorrencia` calcula a repetição em vigor; `comunicados_pendentes` (pop-up), `meus_comunicados` (Avisos), `marcar_comunicado` (viu ou leu e entendeu) e `acompanhamento_comunicado` (gestor).
+- Bloqueante sem ciência impede a reserva (gatilho `reservas_conferir_comunicados`, erro `comunicado_pendente`) e aparece em `pendencias_para_reservar`.
+- Imagens no bucket privado `comunicados` (5 MB, só imagens), caminho `<empresa>/<arquivo>`.
+- Teste: `tests/comunicados.sql`.
+
 ## Primeiro usuário em produção
 O banco não tem usuários de teste. Para liberar o primeiro acesso:
 1. Crie o usuário em Authentication → Users (marque "Auto Confirm User").

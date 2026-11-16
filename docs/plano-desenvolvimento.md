@@ -146,6 +146,28 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 
 **Pronto quando:** o sistema está publicado, com checklist de segurança e LGPD fechado, pronto para um piloto.
 
+### Sprint 8 · Treinamentos e comunicados
+*Combinado em 16/11/2026. Só a estrutura: o conteúdo (vídeos, textos, provas, comunicados) é cadastrado pelo gestor.*
+
+**Parte 1 · Comunicados**
+- [x] Gestor dispara comunicado com título, texto, imagem (reduzida para no máximo 1600 px) e botão de ação (link externo ou tela do app).
+- [x] Público por perfil, grupo e filial, que se somam. Administrador e gestor de frota mandam para a empresa toda; gestor de base só para a própria filial.
+- [x] Recorrência: uma vez, diária, semanal, mensal, anual (com dias no ar a cada ano, para campanhas como o Maio Amarelo) e "a cada acesso até confirmar".
+- [x] Importância: informativo (registra quem viu), ciência obrigatória ("Li e entendi" com data e hora) e bloqueante (não reserva até dar ciência).
+- [x] Pop-up em tela cheia ao abrir o app (no máximo 3 por acesso, bloqueantes primeiro), cópia em Avisos e aviso na tela de reservar.
+- [x] Acompanhamento por comunicado (público, quem viu, quem confirmou), planilha CSV e encerramento. Comunicado enviado não muda.
+- [ ] Push no celular com o app fechado: entra junto com o item "Envio de e-mail e push".
+
+**Parte 2 · Treinamentos**
+- [ ] Modelos de treinamento com etapas em ordem: vídeo do YouTube (não listado), vídeo enviado (até 50 MB), texto e PDF, cada uma com tempo mínimo.
+- [ ] Telemetria rígida: sem adiantar, velocidade 1x, pausa ao sair da tela, "Você está aí?" e conferência do tempo no servidor.
+- [ ] Prova com múltipla escolha (uma ou várias certas), verdadeiro ou falso e resposta escrita (corrigida pelo gestor); nota mínima, tentativas limitadas e embaralhamento.
+
+**Parte 3 · Bloqueios e resultados**
+- [ ] Público por perfil, grupo e filial; validade (reciclagem) com aviso 30 dias antes; prazo para quem já estava cadastrado.
+- [ ] Bloqueio escolhido pelo gestor: só novas reservas, ou novas reservas e retiradas.
+- [ ] Certificado em PDF, painel de acompanhamento e planilha CSV.
+
 ### Pendente para depois · Envio de e-mail e push
 *Combinado em 16/11/2026: fazer só quando os outros pontos estiverem terminados.*
 

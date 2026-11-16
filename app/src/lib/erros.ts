@@ -46,6 +46,11 @@ const MENSAGENS: Record<string, string> = {
   nao_pode_anonimizar_a_si_mesmo: 'Você não pode remover os seus próprios dados por aqui. Peça a outro administrador.',
   aviso_publicado_nao_muda: 'O texto de um aviso publicado não muda. Publique uma nova versão.',
   aviso_nao_encontrado: 'Aviso de privacidade não encontrado.',
+  comunicado_pendente: 'Há um comunicado importante esperando sua leitura. Abra Avisos e confirme que leu para poder reservar.',
+  comunicado_enviado_nao_muda: 'Um comunicado enviado não pode ser alterado. Encerre e envie outro.',
+  comunicado_ja_encerrado: 'Esse comunicado já foi encerrado.',
+  comunicado_nao_encontrado: 'Comunicado não encontrado.',
+  comunicado_fora_do_ar: 'Esse comunicado não está mais no ar.',
   local_obrigatorio: 'Informe onde o carro está agora.',
 }
 

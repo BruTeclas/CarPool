@@ -7,6 +7,7 @@ import { EmpresaProvider } from './lib/empresa'
 import Aprovacoes from './pages/Aprovacoes'
 import Chave from './pages/Chave'
 import Checklist from './pages/Checklist'
+import Comunicados from './pages/Comunicados'
 import Conferencia from './pages/Conferencia'
 import Documentos from './pages/Documentos'
 import Entrar from './pages/Entrar'
@@ -49,6 +50,7 @@ export default function App() {
               <Route path="/reservas/:id/ocorrencia" element={<Ocorrencia />} />
               <Route path="/avisos" element={<Avisos />} />
               <Route path="/incidentes" element={<Incidentes />} />
+              <Route path="/comunicados" element={<Comunicados />} />
               <Route path="/relatorios" element={<Relatorios />} />
               <Route path="/reservas/:id/vistoria/:tipo" element={<Vistoria />} />
               <Route path="/portaria" element={<Portaria />} />

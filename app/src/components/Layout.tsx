@@ -6,6 +6,7 @@ import { useEmpresa } from '../lib/empresa'
 import { supabase } from '../lib/supabase'
 import { PortaoDePrivacidade } from './AvisoPrivacidade'
 import { Icone } from './Icone'
+import { PopupComunicados } from './PopupComunicados'
 
 type Item = { para: string; rotulo: string; icone: string }
 
@@ -29,7 +30,7 @@ export function Layout() {
       itens: [
         ...(podeAprovar ? [{ para: '/aprovacoes', icone: 'aprovacoes', rotulo: 'Aprovações' }] : []),
         ...(podeGerir ? [{ para: '/documentos', icone: 'documentos', rotulo: 'Documentos' }] : []),
-        ...(podeOperar ? [{ para: '/incidentes', icone: 'alerta', rotulo: 'Ocorrências' }] : []),
+        ...(podeOperar ? [{ para: '/incidentes', icone: 'alerta', rotulo: 'Ocorrências' }, { para: '/comunicados', icone: 'comunicados', rotulo: 'Comunicados' }] : []),
         ...(podeVerRelatorios ? [{ para: '/relatorios', icone: 'relatorios', rotulo: 'Relatórios' }] : []),
         ...(podeOperar ? [{ para: '/portaria', icone: 'portaria', rotulo: 'Portaria' }, { para: '/conferencia', icone: 'conferencia', rotulo: 'Conferência' }] : []),
       ],
@@ -79,7 +80,7 @@ export function Layout() {
         {!carregando && !empresaId ? (
           <main><p role="alert" className="erro">Seu usuário ainda não está vinculado a nenhuma empresa. Fale com o administrador.</p></main>
         ) : (
-          <PortaoDePrivacidade><Outlet /></PortaoDePrivacidade>
+          <PortaoDePrivacidade><Outlet /><PopupComunicados /></PortaoDePrivacidade>
         )}
       </div>
     </div>

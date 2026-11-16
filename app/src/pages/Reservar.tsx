@@ -16,7 +16,7 @@ type Livre = { veiculo_id: string; placa: string; modelo: string }
 type Horario = { inicio: string; fim: string }
 type Pendente = { id: string; nome: string; versao: number; config: Record<string, number | boolean> }
 type Mensagem = { texto: string; erro: boolean; link?: boolean }
-type Pendencias = { termos: { id: string; titulo: string; versao: number; texto: string }[]; documentos: string[]; cnh: boolean }
+type Pendencias = { termos: { id: string; titulo: string; versao: number; texto: string }[]; documentos: string[]; cnh: boolean; comunicados?: { id: string; titulo: string }[] }
 
 function regras(c: Pendente['config']): string[] {
   return [
@@ -199,6 +199,19 @@ export default function Reservar() {
               {ocupado ? 'Registrando…' : 'Assinar o termo'}
             </button>
           </p>
+        </section>
+      </main>
+    )
+  }
+  if (pendencias?.comunicados?.length) {
+    return (
+      <main>
+        <h1>Reservar veículo</h1>
+        <section className="cartao" aria-label="Comunicados pendentes">
+          <h2>Leia o comunicado para liberar suas reservas</h2>
+          <p>A empresa pediu que você confirme a leitura de:</p>
+          <ul>{pendencias.comunicados.map((c) => <li key={c.id}>{c.titulo}</li>)}</ul>
+          <p><Link className="botao" to="/avisos">Abrir Avisos</Link></p>
         </section>
       </main>
     )

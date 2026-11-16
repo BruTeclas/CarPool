@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { CorpoDoComunicado } from '../components/Comunicado'
 import { avisarMudanca } from '../lib/avisos'
+import { marcarComunicado, NIVEIS, pedeCiencia } from '../lib/comunicados'
+import type { ComunicadoMeu } from '../lib/comunicados'
+import { useEmpresa } from '../lib/empresa'
 import { formatarDataHora } from '../lib/datas'
 import { supabase } from '../lib/supabase'
 
@@ -9,8 +13,26 @@ type Aviso = { id: string; titulo: string; corpo: string | null; link: string | 
 
 export default function Avisos() {
   const { session } = useAuth()
+  const { empresaId } = useEmpresa()
   const [avisos, setAvisos] = useState<Aviso[] | null>(null)
+  const [comunicados, setComunicados] = useState<ComunicadoMeu[]>([])
+  const [erroCom, setErroCom] = useState(false)
   const uid = session?.user.id
+
+  const carregarComunicados = useCallback(async () => {
+    if (!empresaId) return
+    const { data } = await supabase.rpc('meus_comunicados', { p_empresa: empresaId })
+    setComunicados((data as ComunicadoMeu[] | null) ?? [])
+  }, [empresaId])
+  useEffect(() => { void carregarComunicados() }, [carregarComunicados])
+
+  async function confirmar(c: ComunicadoMeu) {
+    setErroCom(false)
+    const { error } = await marcarComunicado(c.id, true)
+    if (error) return setErroCom(true)
+    avisarMudanca()
+    await carregarComunicados()
+  }
 
   useEffect(() => {
     if (!uid) return
@@ -26,6 +48,25 @@ export default function Avisos() {
   return (
     <main style={{ maxWidth: 760 }}>
       <h1>Avisos</h1>
+      {comunicados.length > 0 && (
+        <section className="cartao" aria-label="Comunicados">
+          <h2>Comunicados</h2>
+          {erroCom && <p role="alert" className="erro">Não foi possível registrar. Tente novamente.</p>}
+          {comunicados.map((c) => (
+            <details key={c.id} className="doc-linha" open={pedeCiencia(c) && !c.ciente_em}>
+              <summary className="doc-topo">
+                <strong>{c.titulo}</strong>
+                <small>
+                  {pedeCiencia(c) && !c.ciente_em && <span className="selo-novo">{c.nivel === 'bloqueante' ? 'Confirme para reservar' : 'Confirme a leitura'}</span>}
+                  {c.ciente_em ? `Lido em ${formatarDataHora(c.ciente_em)}` : NIVEIS[c.nivel].rotulo}
+                </small>
+              </summary>
+              <CorpoDoComunicado c={c} />
+              {pedeCiencia(c) && !c.ciente_em && <div className="acoes"><button type="button" onClick={() => confirmar(c)}>Li e entendi</button></div>}
+            </details>
+          ))}
+        </section>
+      )}
       {avisos === null && <p>Carregando…</p>}
       {avisos?.length === 0 && <section className="cartao"><p>Nenhum aviso por enquanto.</p></section>}
       {avisos && avisos.length > 0 && (
