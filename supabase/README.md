@@ -50,3 +50,10 @@ O aparelho guarda (IndexedDB) o resultado de `minhas_reservas_offline()` e uma f
 - Pane ou acidente fica em `incidentes` (a tabela `ocorrencias` do Sprint 4 é o registro geral de eventos). A reserva vai para o estado `ocorrencia` e o carro para `bloqueado` até o gestor encerrar.
 - Avisos em `notificacoes` (cada pessoa só lê os seus). Faltas e suspensões em `faltas` e `suspensoes`; limites em `politica_padrao()` (`suspensao_faltas`, `suspensao_janela_dias`, `suspensao_dias`, `realocacao_antecedencia_min`).
 - `tests/excecoes.sql`: autossuficiente; sucesso = `OK_TESTES_PASSARAM`.
+
+## Relatórios e central (Sprint 6)
+- `relatorio_frota(empresa, de, ate, filial)` devolve o resumo, o uso por veículo e a demanda não atendida; `relatorio_reservas(...)` devolve uma linha por reserva (base do CSV). Admin, gestor de frota e financeiro veem a empresa toda; gestor de base, só as filiais liberadas.
+- Retirada e devolução reais vêm das vistorias (`app.uso_real`); tempo parado vem de ordens de serviço e incidentes, sem contar sobreposição duas vezes.
+- Demanda não atendida: `registrar_demanda_nao_atendida` é chamada pela tela de reserva quando a busca não acha carro; conta pela hora da busca.
+- `reservas` e `incidentes` estão na publicação `supabase_realtime` (a central da portaria assina as mudanças; a RLS vale também no tempo real).
+- `tests/relatorios.sql`: autossuficiente; sucesso = `OK_TESTES_PASSARAM`.

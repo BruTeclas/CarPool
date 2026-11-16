@@ -42,7 +42,7 @@ function diagnostico(r: Relatorio): string {
   if (s.pico >= s.frota && d.total > 0)
     return `A frota chegou ao limite: no pico, os ${s.frota} carros estavam reservados ao mesmo tempo, e ${d.total} busca${d.total > 1 ? 's' : ''} não encontrou carro livre. Vale aumentar a frota ou espalhar os horários.`
   if (d.total > 0)
-    return `Houve ${d.total} busca${d.total > 1 ? 's' : ''} sem carro livre, mas no pico só ${s.pico} de ${s.frota} carros estavam reservados. A falta pode ser de uma categoria ou filial específica, não da frota toda.`
+    return `Houve ${d.total} busca${d.total > 1 ? 's' : ''} sem carro livre, embora o maior uso simultâneo registrado até agora tenha sido de ${s.pico} de ${s.frota} carros. Veja se a falta se concentra em certos horários, numa categoria ou numa filial antes de aumentar a frota.`
   if (s.frota - s.pico >= 2 && s.utilizacao_pct < 25)
     return `A frota parece maior que a necessidade: utilização de ${pct(s.utilizacao_pct)} e, mesmo no pico, ${s.frota - s.pico} carros ficaram sem reserva.`
   return 'A frota atendeu a demanda do período sem sobra evidente.'

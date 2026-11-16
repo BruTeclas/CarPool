@@ -124,12 +124,14 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 ### Sprint 6 · Central da portaria e relatórios
 *Skills: `vercel-react-best-practices`, `web-design-guidelines`, `supabase`.*
 
-- [ ] Central da portaria (tablet/TV, modo quiosque) com agenda do dia e atualização em tempo real (Realtime).
-- [ ] Relatórios: ocupação, utilização, reservas não utilizadas, demanda não atendida, pico simultâneo, índice de atraso, disponibilidade operacional.
-- [ ] Exportação CSV por centro de custo para o financeiro (perfil somente leitura).
-- [ ] Revisão de desempenho das consultas com `EXPLAIN` nos relatórios.
+- [x] Central da portaria em `/central` (tablet ou TV, tela cheia): saídas, carros na rua, voltam hoje e alertas (atraso, pane ou acidente, conferência pendente), atualizada em tempo real pelo Supabase Realtime, com recarga a cada minuto se o tempo real cair.
+- [x] Relatórios em `/relatorios`: utilização, ocupação, pico simultâneo, disponibilidade, demanda não atendida (registrada quando a busca não acha carro), não retiradas e cancelamentos fora do prazo, atrasos e km, por período e filial, com uma frase de diagnóstico ("a frota está grande ou pequena?").
+- [x] Resumo por centro de custo e CSV para o Excel (uma linha por reserva, e outro por veículo). O perfil financeiro vê só relatórios. A reserva ganhou o campo "Centro de custo".
+- [ ] Revisão de desempenho com `EXPLAIN`: índices dos relatórios criados, mas a medição com volume real fica para o piloto (com os poucos dados de teste o `EXPLAIN` não diz nada).
 
 **Pronto quando:** o gestor responde "a frota está grande ou pequena?" com dado do próprio sistema.
+
+**Situação (16/11/2026):** concluído, menos a medição de desempenho com volume real. Banco testado em `supabase/tests/relatorios.sql` (números conferidos à mão); telas testadas no navegador, inclusive a central mudando sozinha em cerca de 2 segundos quando uma reserva é cancelada.
 
 ### Sprint 7 · LGPD, segurança e publicação
 *Skills: `supabase`, `supabase-postgres-best-practices`, `web-design-guidelines`, `webapp-testing`.*
