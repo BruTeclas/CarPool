@@ -1,0 +1,19 @@
+# Cabeçalhos do Cloudflare Pages
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(self), geolocation=(self), microphone=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# O service worker e o manifesto precisam sempre da versão nova (atualização do app no celular)
+/sw.js
+  Cache-Control: no-cache
+/registerSW.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
+
+# Arquivos com hash no nome podem ficar em cache por um ano
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
