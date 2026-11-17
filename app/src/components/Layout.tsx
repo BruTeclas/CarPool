@@ -12,7 +12,7 @@ type Item = { para: string; rotulo: string; icone: string }
 
 export function Layout() {
   const { session } = useAuth()
-  const { empresaNome, ehAdmin, podeGerir, podeAprovar, podeOperar, podeVerRelatorios, carregando, empresaId } = useEmpresa()
+  const { empresaNome, ehAdmin, podeGerir, podeAprovar, podeOperar, podeVerRelatorios, carregando, empresaId, semConexao } = useEmpresa()
   const [aberto, setAberto] = useState(false)
   const uid = session?.user.id
   const consultaAvisos = useCallback(() => supabase.from('notificacoes').select('id', { count: 'exact', head: true })
@@ -79,7 +79,9 @@ export function Layout() {
       </header>
       <div className="conteudo">
         {!carregando && !empresaId ? (
-          <main><p role="alert" className="erro">Seu usuário ainda não está vinculado a nenhuma empresa. Fale com o administrador.</p></main>
+          <main><p role="alert" className="erro">{semConexao
+            ? 'Sem sinal. Abra o aplicativo uma vez com internet para ele funcionar também sem sinal neste aparelho.'
+            : 'Seu usuário ainda não está vinculado a nenhuma empresa. Fale com o administrador.'}</p></main>
         ) : (
           <PortaoDePrivacidade><Outlet /><PopupComunicados /></PortaoDePrivacidade>
         )}

@@ -13,6 +13,7 @@ export function PortaoDePrivacidade({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!empresaId) return
+    if (!navigator.onLine) { setAviso(null); return }
     supabase.rpc('aviso_privacidade_pendente', { p_empresa: empresaId })
       .then(({ data, error }) => setAviso(error ? null : (data as AvisoPrivacidade | null)))
   }, [empresaId])
@@ -27,9 +28,9 @@ export function PortaoDePrivacidade({ children }: { children: ReactNode }) {
     setAviso(null)
   }
 
-  if (carregando) return null
+  if (carregando && navigator.onLine) return null
   if (!empresaId || aviso === null) return <>{children}</>
-  if (aviso === undefined) return null
+  if (aviso === undefined) return navigator.onLine ? null : <>{children}</>
   return (
     <main>
       <h1>Como tratamos seus dados</h1>

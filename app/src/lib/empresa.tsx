@@ -14,9 +14,10 @@ type Estado = {
   podeAprovar: boolean
   podeOperar: boolean
   podeVerRelatorios: boolean
+  semConexao: boolean
 }
 
-const inicial: Estado = { empresaId: null, empresaNome: '', perfis: [], carregando: true, podeGerir: false, ehAdmin: false, podeAprovar: false, podeOperar: false, podeVerRelatorios: false }
+const inicial: Estado = { empresaId: null, empresaNome: '', perfis: [], carregando: true, podeGerir: false, ehAdmin: false, podeAprovar: false, podeOperar: false, podeVerRelatorios: false, semConexao: false }
 const Contexto = createContext<Estado>(inicial)
 
 type Vinculo = { empresa_id: string; perfil: Perfil; empresas: { nome: string } | null }
@@ -26,15 +27,31 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
   const [vinculos, setVinculos] = useState<Vinculo[] | null>(null)
   const userId = session?.user.id
 
+  const [semConexao, setSemConexao] = useState(false)
+
   useEffect(() => {
     if (!userId) return
+    // Guarda no aparelho os vínculos da última vez com internet: sem sinal (vistoria no subsolo,
+    // estrada), o app abre com eles em vez de ficar esperando a rede.
+    const chave = `carpool.vinculos.${userId}`
+    let guardado: Vinculo[] | null = null
+    try { guardado = JSON.parse(localStorage.getItem(chave) ?? 'null') } catch { /* sem storage */ }
+    if (guardado) setVinculos(guardado)
     supabase
       .from('membros')
       .select('empresa_id, perfil, empresas(nome)')
       .eq('user_id', userId)
       .eq('ativo', true)
       .returns<Vinculo[]>()
-      .then(({ data }) => setVinculos(data ?? []))
+      .then(({ data, error }) => {
+        if (error || !data) {
+          if (!guardado) { setSemConexao(true); setVinculos([]) }
+          return
+        }
+        setSemConexao(false)
+        setVinculos(data)
+        try { localStorage.setItem(chave, JSON.stringify(data)) } catch { /* sem storage */ }
+      })
   }, [userId])
 
   const valor = useMemo<Estado>(() => {
@@ -52,8 +69,9 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
       podeOperar: ehAdmin || perfis.includes('gestor_frota') || perfis.includes('gestor_base'),
       podeAprovar: ehAdmin || perfis.includes('gestor_frota') || perfis.includes('aprovador'),
       podeVerRelatorios: ehAdmin || ['gestor_frota', 'gestor_base', 'financeiro'].some((p) => perfis.includes(p as Perfil)),
+      semConexao,
     }
-  }, [vinculos])
+  }, [vinculos, semConexao])
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>
 }
