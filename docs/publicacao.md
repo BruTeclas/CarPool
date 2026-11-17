@@ -22,6 +22,13 @@ O conteúdo de `app/dist` (incluindo o `.htaccess`) é o que vai para o servidor
 - Crie o primeiro usuário em Authentication → Users e vincule a uma empresa (ver `supabase/README.md`).
 - Os usuários de teste do `seed.sql` **não existem mais** no projeto. Não rode o seed em produção.
 
+## No ar (17/11/2026)
+
+- Endereço: **https://carpool-7iv.pages.dev** (projeto `carpool` no Cloudflare Pages, conta do Bru).
+- Cada envio para `main` no GitHub publica sozinho em cerca de 1 minuto.
+- Testado no ar: entrar, navegar, app instalável (service worker e manifesto), cabeçalhos de segurança, acessibilidade e uso sem sinal.
+- Pendente: Supabase → Authentication → URL Configuration com o endereço do site; domínio próprio.
+
 ## Cloudflare Pages (escolhido em 16/11/2026)
 
 Publicação ligada ao GitHub: cada envio para `main` publica sozinho.

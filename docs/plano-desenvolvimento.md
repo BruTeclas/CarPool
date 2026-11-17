@@ -141,7 +141,7 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [x] Exportação, correção e eliminação dos dados do titular: em Meu perfil a pessoa baixa seus dados (JSON), corrige o nome e faz pedidos; o administrador responde e pode remover os dados de uma pessoa.
 - [x] Revisão de segurança (advisors do Supabase, policies, buckets, chaves) e revisão de acessibilidade (axe, WCAG A/AA, tema claro e escuro: contrastes corrigidos). Resultado em `supabase/README.md`. Falta ligar no painel a proteção contra senhas vazadas.
 - [ ] Testes ponta a ponta do ciclo completo.
-- [ ] Escolha de hospedagem e domínio, publicação e backups.
+- [x] Hospedagem escolhida e site publicado: Cloudflare Pages ligado ao GitHub, em https://carpool-7iv.pages.dev (publica sozinho a cada envio). Falta o domínio próprio, a URL do site no login do Supabase e conferir os backups do Supabase.
 - [ ] Roteiro de implantação para o primeiro cliente (cadastro, etiquetas, treinamento).
 
 **Pronto quando:** o sistema está publicado, com checklist de segurança e LGPD fechado, pronto para um piloto.
