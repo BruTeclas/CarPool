@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { useContagem } from '../lib/avisos'
 import { useEmpresa } from '../lib/empresa'
+import type { Modulo } from '../lib/empresa'
 import { supabase } from '../lib/supabase'
 import { PortaoDePrivacidade } from './AvisoPrivacidade'
 import { Icone } from './Icone'
@@ -10,9 +11,21 @@ import { PopupComunicados } from './PopupComunicados'
 
 type Item = { para: string; rotulo: string; icone: string }
 
+/** Telas que pertencem a um módulo que o super admin liga ou desliga por empresa */
+const MODULO_DA_ROTA: Record<string, Modulo> = {
+  '/meus-documentos': 'documentos', '/documentos': 'documentos', '/termos': 'documentos',
+  '/incidentes': 'ocorrencias',
+  '/comunicados': 'treinamentos', '/meus-treinamentos': 'treinamentos', '/treinamentos': 'treinamentos',
+  '/relatorios': 'relatorios',
+}
+const moduloDe = (caminho: string) => MODULO_DA_ROTA['/' + (caminho.split('/')[1] ?? '')]
+/** Com a empresa suspensa, só dá para ver os avisos e devolver o carro */
+const LIBERADO_NA_SUSPENSAO = ['/avisos', '/reservas', '/']
+
 export function Layout() {
   const { session } = useAuth()
-  const { empresaNome, ehAdmin, podeGerir, podeAprovar, podeOperar, podeVerRelatorios, carregando, empresaId, semConexao } = useEmpresa()
+  const { empresaNome, ehAdmin, podeGerir, podeAprovar, podeOperar, podeVerRelatorios, carregando, empresaId, semConexao, modulos, suspensa, motivoSuspensao, suporteAte, superAdmin } = useEmpresa()
+  const local = useLocation()
   const [aberto, setAberto] = useState(false)
   const uid = session?.user.id
   const consultaAvisos = useCallback(() => supabase.from('notificacoes').select('id', { count: 'exact', head: true })
@@ -48,7 +61,20 @@ export function Layout() {
         ...(ehAdmin ? [{ para: '/privacidade', icone: 'privacidade', rotulo: 'Privacidade e dados' }] : []),
       ],
     },
-  ].filter((g) => g.itens.length > 0)
+  ].map((g) => ({ ...g, itens: g.itens.filter((i) => {
+    const m = moduloDe(i.para)
+    return (!m || modulos.includes(m)) && (!suspensa || LIBERADO_NA_SUSPENSAO.includes(i.para))
+  }) })).filter((g) => g.itens.length > 0)
+
+  const moduloAtual = moduloDe(local.pathname)
+  const bloqueadaAqui = (moduloAtual && !modulos.includes(moduloAtual))
+    || (suspensa && !LIBERADO_NA_SUSPENSAO.some((r) => r === '/' ? local.pathname === '/' : local.pathname.startsWith(r)))
+
+  async function sairDoSuporte() {
+    await supabase.rpc('super_sair_suporte')
+    try { localStorage.removeItem(`carpool.vinculos.${uid}`) } catch { /* sem storage */ }
+    window.location.href = '/super'
+  }
 
   return (
     <div className="moldura">
@@ -72,16 +98,35 @@ export function Layout() {
           ))}
           <div className="nav-grupo nav-conta">
             <p className="nav-titulo">{empresaNome || 'Conta'}</p>
+            {superAdmin && <NavLink to="/super"><Icone nome="estrutura" />Painel do super admin</NavLink>}
             <NavLink to="/" end><Icone nome="perfil" /><span className="nav-texto">Meu perfil<span className="nav-email">{session?.user.email}</span></span></NavLink>
             <button type="button" className="nav-sair" onClick={() => supabase.auth.signOut()}><Icone nome="sair" />Sair</button>
           </div>
         </nav>
       </header>
       <div className="conteudo">
+        {suporteAte && (
+          <div className="faixa-suporte" role="status">
+            <span><strong>Modo suporte</strong> em {empresaNome}, até {new Date(suporteAte).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}. Tudo o que você fizer fica registrado.</span>
+            <button type="button" className="secundario" onClick={sairDoSuporte}>Sair do modo suporte</button>
+          </div>
+        )}
+        {suspensa && !suporteAte && (
+          <div className="faixa-suspensa" role="alert">
+            <strong>Acesso suspenso.</strong> {motivoSuspensao ? `${motivoSuspensao}. ` : ''}Novas reservas e retiradas estão bloqueadas; quem está com um carro ainda consegue devolver. Fale com o suporte.
+          </div>
+        )}
         {!carregando && !empresaId ? (
-          <main><p role="alert" className="erro">{semConexao
-            ? 'Sem sinal. Abra o aplicativo uma vez com internet para ele funcionar também sem sinal neste aparelho.'
-            : 'Seu usuário ainda não está vinculado a nenhuma empresa. Fale com o administrador.'}</p></main>
+          superAdmin && !semConexao ? <Navigate to="/super" replace /> : (
+            <main><p role="alert" className="erro">{semConexao
+              ? 'Sem sinal. Abra o aplicativo uma vez com internet para ele funcionar também sem sinal neste aparelho.'
+              : 'Seu usuário ainda não está vinculado a nenhuma empresa. Fale com o administrador.'}</p></main>
+          )
+        ) : bloqueadaAqui && !carregando ? (
+          <main><p role="alert" className="erro">{suspensa
+            ? 'Esta função está indisponível enquanto o acesso da empresa estiver suspenso.'
+            : 'Este módulo não está liberado para a sua empresa. Fale com o suporte para contratar.'}</p>
+            <p><Link to="/">Voltar ao início</Link></p></main>
         ) : (
           <PortaoDePrivacidade><Outlet /><PopupComunicados /></PortaoDePrivacidade>
         )}

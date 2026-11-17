@@ -30,7 +30,7 @@ const MENSAGENS: Record<string, string> = {
   documento_vencido: 'A data de validade informada já passou.',
   dados_da_cnh_obrigatorios: 'Informe o número e a categoria da CNH.',
   arquivo_nao_encontrado: 'O arquivo não chegou ao servidor. Envie de novo.',
-  motivo_obrigatorio: 'Para recusar, escreva o motivo.',
+  motivo_obrigatorio: 'Escreva o motivo.',
   documento_ja_conferido: 'Esse documento já foi conferido.',
   termo_ja_assinado: 'Você já assinou esse termo.',
   nome_obrigatorio: 'Escreva seu nome completo.',
@@ -69,11 +69,20 @@ const MENSAGENS: Record<string, string> = {
   prova_ja_corrigida: 'Essa prova já foi corrigida.',
   correcao_incompleta: 'Avalie todas as respostas escritas.',
   treinamento_nao_aprovado: 'Ainda não há aprovação neste treinamento.',
+  empresa_suspensa: 'O acesso da empresa está suspenso. Fale com o suporte.',
+  modulo_desligado: 'Este módulo não está liberado para a sua empresa.',
+  empresa_nao_encontrada: 'Empresa não encontrada.',
+  voce_ja_e_membro: 'Você já faz parte desta empresa: entre normalmente, sem o modo suporte.',
+  cnpj_invalido: 'CNPJ inválido. Confira os números.',
+  cnpj_ja_cadastrado: 'Já existe uma empresa com esse CNPJ.',
+  nao_pode_remover_a_si_mesmo: 'Você não pode tirar o seu próprio acesso. Peça a outro super admin.',
   local_obrigatorio: 'Informe onde o carro está agora.',
 }
 
 export function mensagemDeErro(erro: { message?: string } | null | undefined): string {
   const bruto = erro?.message ?? ''
+  const limite = bruto.match(/limite_do_plano: (\w+)/)
+  if (limite) return `A empresa atingiu o limite de ${{ usuarios: 'usuários', veiculos: 'veículos', filiais: 'filiais' }[limite[1]] ?? limite[1]} do plano. Fale com o suporte para ampliar.`
   const pendente = bruto.match(/treinamento_pendente: (.+)/)
   if (pendente) return `Falta o treinamento obrigatório “${pendente[1]}”. Faça em Meus treinamentos para liberar.`
   const codigo = Object.keys(MENSAGENS).find((c) => bruto.includes(c))

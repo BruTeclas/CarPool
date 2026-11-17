@@ -8,6 +8,9 @@ import Aprovacoes from './pages/Aprovacoes'
 import Chave from './pages/Chave'
 import Checklist from './pages/Checklist'
 import Comunicados from './pages/Comunicados'
+import DefinirSenha from './pages/DefinirSenha'
+import Super from './pages/Super'
+import SuperEmpresa from './pages/SuperEmpresa'
 import FazerTreinamento from './pages/FazerTreinamento'
 import MeusTreinamentos from './pages/MeusTreinamentos'
 import TreinamentoEditor from './pages/TreinamentoEditor'
@@ -43,8 +46,11 @@ export default function App() {
         <Sincronizador />
         <Routes>
           <Route path="/entrar" element={<Entrar />} />
+          <Route path="/definir-senha" element={<DefinirSenha />} />
           <Route path="/k/:codigo" element={<Chave />} />
           <Route element={<RotaProtegida />}>
+            <Route path="/super" element={<Super />} />
+            <Route path="/super/empresas/:id" element={<SuperEmpresa />} />
             <Route path="/central" element={<EmpresaProvider><Central /></EmpresaProvider>} />
             <Route element={<EmpresaProvider><Layout /></EmpresaProvider>}>
               <Route path="/" element={<MeuPerfil />} />

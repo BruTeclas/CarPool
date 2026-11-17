@@ -95,6 +95,7 @@ export default function Pessoas() {
         </section>
       )}
       <Crud titulo="Pessoas e perfis" tabela="membros" ordem="nome" podeEditar={ehAdmin} semCriar semExcluir versao={versao}
+        filtro={{ coluna: 'suporte_ate', nulo: true }}
         aoMudar={() => setVersao((v) => v + 1)}
         campos={[
           { nome: 'nome', rotulo: 'Nome', obrigatorio: true },

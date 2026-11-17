@@ -8,10 +8,13 @@ export function useOpcoes(tabela: string, colunaValor: string, colunaRotulo: str
   const [opcoes, setOpcoes] = useState<Opcao[]>([])
   useEffect(() => {
     if (!empresaId) return
-    supabase
+    let consulta = supabase
       .from(tabela)
       .select(`${colunaValor}, ${colunaRotulo}`)
       .eq('empresa_id', empresaId)
+    // o acesso temporário do suporte não aparece como pessoa da empresa
+    if (tabela === 'membros') consulta = consulta.is('suporte_ate', null)
+    consulta
       .order(colunaRotulo)
       .then(({ data }) => {
         const vistos = new Set<string>()

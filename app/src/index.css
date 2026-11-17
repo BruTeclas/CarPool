@@ -326,3 +326,16 @@ legend { font-weight: 600; padding: 0 6px; color: var(--texto); }
 .prova { display: grid; gap: 16px; padding-left: 20px; }
 .resposta-escrita { white-space: pre-wrap; background: var(--neutro); border-radius: 10px; padding: 10px 12px; }
 a.botao.pequeno { padding: 6px 12px; font-size: .85rem; }
+
+/* Super admin: faixas de suporte e de suspensão */
+.faixa-suporte, .faixa-suspensa { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; padding: 10px 20px; font-size: .92rem; }
+.faixa-suporte { background: var(--atencao-leve); color: var(--texto); }
+.faixa-suspensa { background: var(--perigo-leve); color: var(--texto); }
+
+/* Painel do super admin */
+.super { min-height: 100dvh; background: var(--fundo); }
+.super-topo { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding: 12px 20px; background: var(--lateral); border-bottom: 1px solid var(--linha); }
+.super-topo .marca { color: var(--texto); text-decoration: none; }
+.super-conta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.super main { max-width: 1180px; margin: 0 auto; padding: 28px 20px 60px; }
+@media (max-width: 600px) { .super main { padding: 20px 16px 48px; } }

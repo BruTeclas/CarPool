@@ -16,6 +16,7 @@ export default function Entrar() {
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
+  const [aviso, setAviso] = useState<string | null>(null)
 
   if (session) return <Navigate to={destino} replace />
 
@@ -27,6 +28,15 @@ export default function Entrar() {
     setEnviando(false)
     if (error) setErro('E-mail ou senha inválidos.')
     else navegar(destino, { replace: true })
+  }
+
+  async function esqueci() {
+    setErro(null)
+    setAviso(null)
+    if (!email.includes('@')) return setErro('Escreva o seu e-mail acima e clique de novo em “Esqueci minha senha”.')
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/definir-senha` })
+    if (error) return setErro('Não foi possível enviar agora. Tente de novo em alguns minutos.')
+    setAviso('Se o e-mail estiver cadastrado, você vai receber um link para criar uma nova senha.')
   }
 
   return (
@@ -47,7 +57,9 @@ export default function Entrar() {
             onChange={(e) => setSenha(e.target.value)} />
         </label>
         {erro && <p role="alert" className="erro">{erro}</p>}
+        {aviso && <p role="status" className="sucesso">{aviso}</p>}
         <button type="submit" disabled={enviando}>{enviando ? 'Entrando…' : 'Entrar'}</button>
+        <button type="button" className="secundario" onClick={esqueci}>Esqueci minha senha</button>
       </form>
       </main>
     </div>
