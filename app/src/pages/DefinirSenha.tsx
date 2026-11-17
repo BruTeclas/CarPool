@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { CampoSenha } from '../components/CampoSenha'
 import { supabase } from '../lib/supabase'
 
 /** Aberta pelo link do convite ou do "esqueci minha senha": a pessoa cria a própria senha. */
@@ -33,12 +34,8 @@ export default function DefinirSenha() {
         ) : (
           <form onSubmit={salvar} style={{ display: 'grid', gap: 14 }}>
             <p className="entrada-sub">Conta: <strong>{session.user.email}</strong></p>
-            <label>Nova senha
-              <input type="password" autoComplete="new-password" minLength={8} required value={senha} onChange={(e) => setSenha(e.target.value)} />
-            </label>
-            <label>Repita a senha
-              <input type="password" autoComplete="new-password" minLength={8} required value={confirma} onChange={(e) => setConfirma(e.target.value)} />
-            </label>
+            <CampoSenha rotulo="Nova senha" autoComplete="new-password" minLength={8} required value={senha} onChange={(e) => setSenha(e.target.value)} />
+            <CampoSenha rotulo="Repita a senha" autoComplete="new-password" minLength={8} required value={confirma} onChange={(e) => setConfirma(e.target.value)} />
             {erro && <p role="alert" className="erro">{erro}</p>}
             <button type="submit" disabled={salvando}>{salvando ? 'Salvando…' : 'Salvar e entrar'}</button>
           </form>

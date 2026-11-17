@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { Icone } from '../components/Icone'
+import { CampoSenha } from '../components/CampoSenha'
 import { supabase } from '../lib/supabase'
 
 export default function Entrar() {
@@ -51,11 +52,8 @@ export default function Entrar() {
           <input type="email" autoComplete="email" required value={email}
             onChange={(e) => setEmail(e.target.value)} />
         </label>
-        <label>
-          Senha
-          <input type="password" autoComplete="current-password" required value={senha}
-            onChange={(e) => setSenha(e.target.value)} />
-        </label>
+        <CampoSenha rotulo="Senha" autoComplete="current-password" required value={senha}
+          onChange={(e) => setSenha(e.target.value)} />
         {erro && <p role="alert" className="erro">{erro}</p>}
         {aviso && <p role="status" className="sucesso">{aviso}</p>}
         <button type="submit" disabled={enviando}>{enviando ? 'Entrando…' : 'Entrar'}</button>

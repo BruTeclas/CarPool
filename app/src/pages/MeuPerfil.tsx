@@ -7,6 +7,7 @@ import { mensagemDeErro } from '../lib/erros'
 import { rotuloPerfil } from '../lib/perfis'
 import { baixarMeusDados, SITUACOES_DE_PEDIDO, TIPOS_DE_PEDIDO } from '../lib/privacidade'
 import type { AvisoPrivacidade, Solicitacao } from '../lib/privacidade'
+import { CampoSenha } from '../components/CampoSenha'
 import { supabase } from '../lib/supabase'
 
 type Mensagem = { texto: string; erro: boolean } | null
@@ -108,9 +109,7 @@ export default function MeuPerfil() {
       <section className="cartao" aria-label="Trocar senha">
         <h2>Trocar senha</h2>
         <form onSubmit={trocarSenha} className="acoes">
-          <label>Nova senha
-            <input type="password" autoComplete="new-password" minLength={8} required value={senha} onChange={(e) => setSenha(e.target.value)} />
-          </label>
+          <CampoSenha rotulo="Nova senha" autoComplete="new-password" minLength={8} required value={senha} onChange={(e) => setSenha(e.target.value)} />
           <button type="submit">Salvar senha</button>
         </form>
         <Retorno m={msgSenha} />
