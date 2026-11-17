@@ -6,6 +6,7 @@ import { mensagemDeErro } from '../lib/erros'
 import { assistenciaDoCarro, baixarAssistencia, registrarOcorrencia, TIPOS_OCORRENCIA } from '../lib/ocorrencias'
 import type { Assistencia, TipoOcorrencia } from '../lib/ocorrencias'
 import { reservasLocais } from '../lib/offline'
+import { Voltar } from '../components/Voltar'
 import { supabase } from '../lib/supabase'
 
 type Reserva = { id: string; empresa_id: string; status: string; veiculos: { placa: string; modelo: string } | null }
@@ -125,7 +126,7 @@ export default function Ocorrencia() {
 
   return (
     <main style={{ maxWidth: 640 }}>
-      <p><Link to={`/reservas/${reserva.id}`}>← Voltar para a reserva</Link></p>
+      <Voltar para={`/reservas/${reserva.id}`}>Voltar para a reserva</Voltar>
       <h1>Pane ou acidente</h1>
       <p><Veiculo placa={reserva.veiculos?.placa} modelo={reserva.veiculos?.modelo} /></p>
       {tipo === 'acidente_com_vitima' && <Emergencia />}

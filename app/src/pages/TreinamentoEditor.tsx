@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { AcompanhamentoTreinamento } from '../components/AcompanhamentoTreinamento'
 import { RegrasTreinamento } from '../components/RegrasTreinamento'
 import { useEmpresa } from '../lib/empresa'
@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase'
 import {
   BLOQUEIOS, carregarYoutube, codigoDoYoutube, duracao, duracaoDoArquivo, subirArquivoDeTreinamento, TIPOS_DE_ETAPA, TIPOS_DE_PERGUNTA,
 } from '../lib/treinamentos'
+import { Voltar } from '../components/Voltar'
 import type { Alternativa, Etapa, Pergunta, TipoEtapa, TipoPergunta, Treinamento } from '../lib/treinamentos'
 
 type Mensagem = { texto: string; erro: boolean } | null
@@ -336,7 +337,7 @@ export default function TreinamentoEditor() {
 
   return (
     <main>
-      <p><Link to="/treinamentos">← Treinamentos</Link></p>
+      <Voltar para="/treinamentos">Treinamentos</Voltar>
       <h1>{t.titulo} <small className="versao">versão {t.versao}</small></h1>
       <p>
         {rascunho ? <span className="situacao s-solicitada">Rascunho</span> : <span className={`situacao ${t.ativo ? 's-aprovada' : ''}`}>{t.ativo ? 'Publicado' : 'Fora do ar'}</span>}

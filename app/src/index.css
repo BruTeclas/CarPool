@@ -349,3 +349,9 @@ a.botao.pequeno { padding: 6px 12px; font-size: .85rem; }
   display: grid; place-items: center; border-radius: 50%; background: transparent; color: var(--suave); box-shadow: none; transform: none; }
 .campo-senha .ver-senha:hover { background: var(--neutro); color: var(--texto); transform: none; }
 .campo-senha .ver-senha:active { transform: none; }
+
+/* Link de voltar */
+.voltar { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 14px -6px; padding: 6px 12px 6px 6px; border-radius: 999px;
+  color: var(--suave); font-size: .9rem; font-weight: 500; text-decoration: none; transition: background .15s, color .15s; }
+.voltar:hover { background: var(--neutro); color: var(--texto); text-decoration: none; }
+.voltar:focus-visible { outline: 2px solid var(--acao); outline-offset: 2px; }

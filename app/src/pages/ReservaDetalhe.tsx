@@ -10,6 +10,7 @@ import { rotuloOcorrencia } from '../lib/ocorrencias'
 import { reservasLocais } from '../lib/offline'
 import { useOpcoes } from '../lib/opcoes'
 import { podeCancelar, rotuloStatus } from '../lib/status'
+import { Voltar } from '../components/Voltar'
 import { supabase } from '../lib/supabase'
 
 type Reserva = {
@@ -88,7 +89,7 @@ export default function ReservaDetalhe() {
 
   return (
     <main>
-      <p><Link to="/reservas">← Minhas reservas</Link></p>
+      <Voltar para="/reservas">Minhas reservas</Voltar>
       <h1><Veiculo placa={reserva.veiculos?.placa} modelo={reserva.veiculos?.modelo} /></h1>
       <section className="cartao" aria-label="Dados da reserva">
         <p><Situacao status={reserva.status} /></p>

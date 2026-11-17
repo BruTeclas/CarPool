@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { formatarDataHora } from '../lib/datas'
 import { mensagemDeErro } from '../lib/erros'
 import { formatarCnpj, limiteTexto } from '../lib/superadmin'
 import type { EmpresaResumo } from '../lib/superadmin'
 import { supabase } from '../lib/supabase'
+import { Voltar } from '../components/Voltar'
 import { FormEmpresa, MolduraSuper, Retorno, salvarEmpresa } from './Super'
 
 type Mensagem = { texto: string; erro: boolean } | null
@@ -74,7 +75,7 @@ export default function SuperEmpresa() {
 
   return (
     <MolduraSuper titulo={e.nome}>
-      <p><Link to="/super">← Todas as empresas</Link></p>
+      <Voltar para="/super">Todas as empresas</Voltar>
       <p>
         <span className={`situacao ${e.situacao === 'ativa' ? 's-aprovada' : 's-atrasada'}`}>{e.situacao === 'ativa' ? 'Ativa' : 'Suspensa'}</span>
         {' '}{e.cnpj ? formatarCnpj(e.cnpj) : 'sem CNPJ'}{e.razao_social ? ` · ${e.razao_social}` : ''} · cadastrada em {formatarDataHora(e.criado_em)}

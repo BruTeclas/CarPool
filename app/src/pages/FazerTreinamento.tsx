@@ -5,6 +5,7 @@ import { avisarMudanca } from '../lib/avisos'
 import { mensagemDeErro } from '../lib/erros'
 import { supabase } from '../lib/supabase'
 import { baixarCertificado, carregarYoutube, duracao, relogio, SITUACAO_DA_TENTATIVA, TIPOS_DE_ETAPA, urlDoArquivo } from '../lib/treinamentos'
+import { Voltar } from '../components/Voltar'
 import type { Conteudo, EtapaDoColaborador, TentativaAberta, YTPlayer } from '../lib/treinamentos'
 
 const INTERVALO_SINAL_MS = 5000
@@ -392,7 +393,7 @@ export default function FazerTreinamento() {
 
   return (
     <main className="treinamento">
-      <p><Link to="/meus-treinamentos">← Meus treinamentos</Link></p>
+      <Voltar para="/meus-treinamentos">Meus treinamentos</Voltar>
       <h1>{t.titulo}</h1>
       {t.descricao && <p>{t.descricao}</p>}
       {m.ciclo > 1 && !m.conteudo_concluido_em && <p role="note" className="popup-alerta">As tentativas da prova acabaram. Refaça o conteúdo para poder tentar de novo.</p>}
