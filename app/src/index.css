@@ -340,11 +340,12 @@ a.botao.pequeno { padding: 6px 12px; font-size: .85rem; }
 .super main { max-width: 1180px; margin: 0 auto; padding: 28px 20px 60px; }
 @media (max-width: 600px) { .super main { padding: 20px 16px 48px; } }
 
-/* Campo de senha com botão Mostrar/Ocultar */
+/* Campo de senha com botão de olho (mostrar/ocultar) */
 .campo-senha-bloco { display: grid; gap: 6px; }
 .campo-senha-bloco label { display: block; }
 .campo-senha { position: relative; }
-.campo-senha input { padding-right: 92px; }
-.ver-senha { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); padding: 6px 12px; font-size: .85rem; background: var(--neutro); color: var(--texto); }
-.ver-senha:hover { background: var(--neutro-forte); }
-.ver-senha:active { transform: translateY(-50%) scale(.98); }
+.campo-senha input { padding-right: 46px; }
+.campo-senha .ver-senha { position: absolute; right: 4px; top: 0; bottom: 0; margin: auto 0; width: 38px; height: 38px; padding: 0;
+  display: grid; place-items: center; border-radius: 50%; background: transparent; color: var(--suave); box-shadow: none; transform: none; }
+.campo-senha .ver-senha:hover { background: var(--neutro); color: var(--texto); transform: none; }
+.campo-senha .ver-senha:active { transform: none; }
