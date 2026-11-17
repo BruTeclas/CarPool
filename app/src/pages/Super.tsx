@@ -22,13 +22,21 @@ export function MolduraSuper({ titulo, children }: { titulo: string; children: R
   const { session } = useAuth()
   const [eu, setEu] = useState<boolean | null>(null)
   useEffect(() => { void supabase.rpc('sou_super_admin').then(({ data }) => setEu(data === true)) }, [])
+  // Só mostra "Área da empresa" para quem também é membro de alguma empresa (fora do modo suporte)
+  const [temEmpresa, setTemEmpresa] = useState(false)
+  const uid = session?.user.id
+  useEffect(() => {
+    if (!uid) return
+    void supabase.from('membros').select('empresa_id').eq('user_id', uid).eq('ativo', true).is('suporte_ate', null).limit(1)
+      .then(({ data }) => setTemEmpresa((data?.length ?? 0) > 0))
+  }, [uid])
   return (
     <div className="super">
       <header className="super-topo">
         <Link to="/super" className="marca"><span className="marca-icone"><Icone nome="chave" tamanho={18} /></span>Car Pool · Super admin</Link>
         <span className="super-conta">
           <span className="nav-email">{session?.user.email}</span>
-          <Link to="/">Área da empresa</Link>
+          {temEmpresa && <Link to="/">Área da empresa</Link>}
           <button type="button" className="secundario" onClick={() => supabase.auth.signOut()}>Sair</button>
         </span>
       </header>
