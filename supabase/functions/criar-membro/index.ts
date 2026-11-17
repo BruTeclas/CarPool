@@ -70,7 +70,11 @@ Deno.serve(async (req: Request) => {
     .insert({ empresa_id: empresaId, user_id: userId, perfil, nome })
   if (error) {
     if (senha) await servico.auth.admin.deleteUser(userId)
-    return resposta({ erro: error.code === '23505' ? 'Essa pessoa já tem esse perfil na empresa.' : 'Não foi possível vincular a pessoa.' }, 400)
+    const motivo = error.code === '23505' ? 'Essa pessoa já tem esse perfil na empresa.'
+      : error.message.includes('limite_do_plano') ? 'A empresa atingiu o limite de usuários do plano. Fale com o suporte para ampliar.'
+      : error.message.includes('empresa_suspensa') ? 'A empresa está suspensa: não é possível cadastrar pessoas.'
+      : 'Não foi possível vincular a pessoa.'
+    return resposta({ erro: motivo }, 400)
   }
   return resposta({ ok: true, senha_temporaria: senha })
 })
