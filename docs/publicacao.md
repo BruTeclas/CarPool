@@ -39,4 +39,6 @@ Publicação ligada ao GitHub: cada envio para `main` publica sozinho.
 5. Domínio próprio: no projeto, **Custom domains** → `carpool.zentrega.com.br` (ou outro). Como o DNS de `zentrega.com.br` está na Hostinger, criar lá um registro **CNAME** `carpool` → `<nome-do-projeto>.pages.dev`. O HTTPS sai automático.
 6. Supabase → **Authentication → URL Configuration**: colocar o endereço final em **Site URL** e em **Redirect URLs** (links de troca de senha).
 
+Se o painel abrir o fluxo de **Workers** (campos "Comando de implantação" e "Comando de visualização"), também funciona: o `app/wrangler.jsonc` já está pronto. Preencher: diretório raiz `app`, build `npm run build`, implantação `npx wrangler deploy`, visualização `npx wrangler versions upload`.
+
 `app/public/_headers` define os cabeçalhos de segurança e o cache do service worker. Sem `404.html`, o Pages devolve o `index.html` para qualquer rota (o React Router cuida do resto).

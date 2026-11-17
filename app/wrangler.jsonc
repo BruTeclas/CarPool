@@ -1,0 +1,10 @@
+// Publicação no Cloudflare (Workers com arquivos estáticos). O site é só o conteúdo de dist/;
+// rotas desconhecidas devolvem o index.html (o React Router cuida do resto).
+{
+  "name": "carpool",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
