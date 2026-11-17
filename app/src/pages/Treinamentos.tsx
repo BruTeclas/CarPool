@@ -2,11 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
+import { colunasDoResultado } from '../components/AcompanhamentoTreinamento'
+import { baixarCsv, gerarCsv } from '../lib/csv'
 import { formatarDataHora } from '../lib/datas'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
 import { supabase } from '../lib/supabase'
-import type { PerguntaDaProva, Treinamento } from '../lib/treinamentos'
+import { BLOQUEIOS } from '../lib/treinamentos'
+import type { LinhaAcompanhamento, PerguntaDaProva, Treinamento } from '../lib/treinamentos'
 
 type ParaCorrigir = {
   id: string; treinamento_id: string; user_id: string; numero: number; enviada_em: string
@@ -88,6 +91,19 @@ export default function Treinamentos() {
     navegar(`/treinamentos/${data.id}`)
   }
 
+  async function planilhaGeral() {
+    setMsg(null)
+    const noAr = lista.filter((t) => t.publicado_em && t.ativo)
+    const linhas: string[] = []
+    for (const t of noAr) {
+      const { data } = await supabase.rpc('acompanhamento_treinamento', { p_treinamento: t.id })
+      const csv = gerarCsv((data as LinhaAcompanhamento[]) ?? [], colunasDoResultado(t.titulo)).replace(/^\uFEFF/, '').trimEnd().split('\r\n')
+      linhas.push(...(linhas.length ? csv.slice(1) : csv))
+    }
+    if (!linhas.length) return setMsg({ texto: 'Nenhum treinamento publicado ainda.', erro: true })
+    baixarCsv(`treinamentos-resultados-${new Date().toISOString().slice(0, 10)}.csv`, '\uFEFF' + linhas.join('\r\n') + '\r\n')
+  }
+
   if (!podeGerir) return <main><p role="alert" className="erro">Só o administrador e o gestor de frota montam treinamentos.</p></main>
 
   // Uma linha por treinamento (família), com as versões embaixo
@@ -108,7 +124,9 @@ export default function Treinamentos() {
       )}
 
       <section className="cartao" aria-label="Treinamentos">
-        <h2>Seus treinamentos</h2>
+        <div className="doc-topo"><h2>Seus treinamentos</h2>
+          {familias.length > 0 && <button type="button" className="secundario" onClick={planilhaGeral}>Baixar todos os resultados (CSV)</button>}
+        </div>
         {familias.length === 0 && <p>Nenhum treinamento ainda. Comece criando um abaixo, por exemplo “Onboarding” ou “Reciclagem anual”.</p>}
         {familias.map((versoes) => {
           const atual = versoes[0]
@@ -124,6 +142,7 @@ export default function Treinamentos() {
                   ))}
                 </span>
               </div>
+              <small>{BLOQUEIOS[(versoes.find((v) => v.publicado_em && v.ativo) ?? atual).bloqueio].rotulo}</small>
               {atual.descricao && <small>{atual.descricao}</small>}
             </div>
           )

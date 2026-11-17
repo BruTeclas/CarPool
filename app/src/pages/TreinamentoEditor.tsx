@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { AcompanhamentoTreinamento } from '../components/AcompanhamentoTreinamento'
+import { RegrasTreinamento } from '../components/RegrasTreinamento'
 import { useEmpresa } from '../lib/empresa'
 import { mensagemDeErro } from '../lib/erros'
 import { supabase } from '../lib/supabase'
 import {
-  carregarYoutube, codigoDoYoutube, duracao, duracaoDoArquivo, subirArquivoDeTreinamento, TIPOS_DE_ETAPA, TIPOS_DE_PERGUNTA,
+  BLOQUEIOS, carregarYoutube, codigoDoYoutube, duracao, duracaoDoArquivo, subirArquivoDeTreinamento, TIPOS_DE_ETAPA, TIPOS_DE_PERGUNTA,
 } from '../lib/treinamentos'
 import type { Alternativa, Etapa, Pergunta, TipoEtapa, TipoPergunta, Treinamento } from '../lib/treinamentos'
 
@@ -338,6 +340,7 @@ export default function TreinamentoEditor() {
       <h1>{t.titulo} <small className="versao">versão {t.versao}</small></h1>
       <p>
         {rascunho ? <span className="situacao s-solicitada">Rascunho</span> : <span className={`situacao ${t.ativo ? 's-aprovada' : ''}`}>{t.ativo ? 'Publicado' : 'Fora do ar'}</span>}
+        {' '}<span className="situacao">{BLOQUEIOS[t.bloqueio].rotulo}</span>
         {' '}{etapas.length} {etapas.length === 1 ? 'etapa' : 'etapas'}, cerca de {duracao(tempoTotal)} de conteúdo, {perguntas.length} {perguntas.length === 1 ? 'pergunta' : 'perguntas'}.
       </p>
       <Retorno m={msg} />
@@ -350,6 +353,9 @@ export default function TreinamentoEditor() {
           </div>
         </section>
       )}
+
+      {!rascunho && <AcompanhamentoTreinamento t={t} />}
+      <RegrasTreinamento key={t.id} t={t} aoSalvar={carregar} />
 
       <section className="cartao" aria-label="Dados do treinamento">
         <h2>Dados e regras da prova</h2>

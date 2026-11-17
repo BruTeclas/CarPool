@@ -68,11 +68,14 @@ const MENSAGENS: Record<string, string> = {
   prova_nao_encontrada: 'Prova não encontrada.',
   prova_ja_corrigida: 'Essa prova já foi corrigida.',
   correcao_incompleta: 'Avalie todas as respostas escritas.',
+  treinamento_nao_aprovado: 'Ainda não há aprovação neste treinamento.',
   local_obrigatorio: 'Informe onde o carro está agora.',
 }
 
 export function mensagemDeErro(erro: { message?: string } | null | undefined): string {
   const bruto = erro?.message ?? ''
+  const pendente = bruto.match(/treinamento_pendente: (.+)/)
+  if (pendente) return `Falta o treinamento obrigatório “${pendente[1]}”. Faça em Meus treinamentos para liberar.`
   const codigo = Object.keys(MENSAGENS).find((c) => bruto.includes(c))
   if (codigo) return MENSAGENS[codigo]
   if (bruto.startsWith('transicao_nao_permitida')) return 'Essa ação não é permitida para a reserva nesse estado.'

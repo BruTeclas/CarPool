@@ -166,9 +166,11 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 - [ ] Testar o vídeo do YouTube no site publicado (a rede do ambiente de testes bloqueia o YouTube; o vídeo enviado foi testado).
 
 **Parte 3 · Bloqueios e resultados**
-- [ ] Público por perfil, grupo e filial; validade (reciclagem) com aviso 30 dias antes; prazo para quem já estava cadastrado.
-- [ ] Bloqueio escolhido pelo gestor: só novas reservas, ou novas reservas e retiradas.
-- [ ] Certificado em PDF, painel de acompanhamento e planilha CSV.
+- [x] Público por perfil, grupo e filial (quem entra depois recebe sozinho); validade (reciclagem) com avisos 30, 7 e 1 dia antes; prazo em dias contado da publicação ou da entrada da pessoa (0 = bloqueia na hora). Aviso ao publicar e rotina diária de prazos.
+- [x] Bloqueio escolhido pelo gestor: opcional, só novas reservas, ou novas reservas e retiradas (devolver sempre pode). A aprovação vale para todas as versões do treinamento; vencida, o conteúdo é refeito.
+- [x] Certificado em PDF (pelo colaborador ou pelo gestor), painel de acompanhamento por situação e planilha CSV por treinamento e geral.
+
+**Situação (17/11/2026):** concluído. Banco testado em `supabase/tests/comunicados.sql`, `treinamentos.sql` e `treinamentos_obrigatorios.sql`; telas testadas no navegador, no computador e no celular, com verificação de acessibilidade. Falta testar o vídeo do YouTube e o push no site publicado.
 
 ### Pendente para depois · Envio de e-mail e push
 *Combinado em 16/11/2026: fazer só quando os outros pontos estiverem terminados.*

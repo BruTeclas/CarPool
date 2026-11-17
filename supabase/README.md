@@ -47,6 +47,14 @@ Buckets `vistorias` e `documentos` são privados, com limite de tamanho (5 e 10 
 - Arquivos no bucket privado `treinamentos` (50 MB, MP4, WebM e PDF), caminho `<empresa>/<treinamento>/<arquivo>`.
 - Teste: `tests/treinamentos.sql`.
 
+## Treinamentos obrigatórios (Sprint 8, parte 3)
+- `bloqueio` em `treinamentos`: `nenhum` (opcional), `reservas` ou `reservas_e_retiradas`. Público, prazo e validade podem mudar depois de publicado.
+- `app.treinamentos_obrigatorios(empresa, pessoa)`: situação em cada obrigatório (prazo, aprovação mais recente na família, em dia, bloqueando). Prazo = maior entre a publicação da primeira versão e a entrada da pessoa, + `prazo_dias`; com aprovação vencida, bloqueia na hora.
+- Gatilho `reservas_conferir_treinamentos`: barra a reserva nova e, com `reservas_e_retiradas`, a passagem para `liberada` ou `em_uso` (erro `treinamento_pendente: <título>`). Aparece em `pendencias_para_reservar`.
+- Reciclagem: `app.matricula` abre ciclo novo quando a aprovação venceu, e o conteúdo é refeito.
+- `acompanhamento_treinamento` (gestor) e `certificado_treinamento` (a pessoa ou o gestor). Rotina `carpool-treinamentos` (diária, 11:17 UTC) avisa prazos (7, 1, 0 dias) e reciclagem (30, 7, 1 dia).
+- Teste: `tests/treinamentos_obrigatorios.sql`.
+
 ## Primeiro usuário em produção
 O banco não tem usuários de teste. Para liberar o primeiro acesso:
 1. Crie o usuário em Authentication → Users (marque "Auto Confirm User").

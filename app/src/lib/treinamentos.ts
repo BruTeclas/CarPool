@@ -131,3 +131,70 @@ export function carregarYoutube(): Promise<YTNamespace> {
   })
   return carregandoYoutube
 }
+
+// ------------------------------------------------------------ obrigatoriedade e resultados
+export const BLOQUEIOS: Record<Treinamento['bloqueio'], { rotulo: string; ajuda: string }> = {
+  nenhum: { rotulo: 'Opcional', ajuda: 'Fica disponível para o público, mas não bloqueia nada.' },
+  reservas: { rotulo: 'Obrigatório: bloqueia novas reservas', ajuda: 'Passado o prazo, quem não foi aprovado não faz reserva nova. Reservas já aprovadas continuam valendo.' },
+  reservas_e_retiradas: { rotulo: 'Obrigatório: bloqueia reservas e retiradas', ajuda: 'Passado o prazo, quem não foi aprovado não reserva nem retira carro (devolver sempre pode).' },
+}
+
+export type Situacao = 'aprovado' | 'vencendo' | 'aguardando_correcao' | 'vencido' | 'atrasado' | 'em_andamento' | 'nao_iniciado'
+export const SITUACOES: Record<Situacao, { rotulo: string; classe: string }> = {
+  aprovado: { rotulo: 'Aprovado', classe: 's-aprovada' },
+  vencendo: { rotulo: 'Vence em até 30 dias', classe: 's-solicitada' },
+  aguardando_correcao: { rotulo: 'Aguardando correção', classe: 's-solicitada' },
+  vencido: { rotulo: 'Vencido', classe: 's-atrasada' },
+  atrasado: { rotulo: 'Prazo vencido', classe: 's-atrasada' },
+  em_andamento: { rotulo: 'Em andamento', classe: 's-liberada' },
+  nao_iniciado: { rotulo: 'Não iniciado', classe: '' },
+}
+
+export type LinhaAcompanhamento = {
+  user_id: string; nome: string | null; situacao: Situacao; prazo_ate: string | null; etapas_concluidas: number; etapas: number
+  segundos: number; tentativas: number; ultima_nota: number | null; aprovado_em: string | null; valido_ate: string | null; nota: number | null
+}
+
+export const dataCurta = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) : '')
+
+type DadosCertificado = {
+  nome: string; empresa: string; treinamento: string; versao: number; nota: number; nota_minima: number
+  aprovado_em: string; valido_ate: string | null; segundos: number; etapas: { titulo: string; tipo: TipoEtapa }[] | null; codigo: string | null; tentativa_id: string | null
+}
+
+/** Gera e baixa o certificado em PDF (do próprio usuário, ou de outra pessoa quando quem pede é o gestor) */
+export async function baixarCertificado(treinamentoId: string, userId?: string): Promise<string | null> {
+  const { data, error } = await supabase.rpc('certificado_treinamento', { p_treinamento: treinamentoId, p_user: userId ?? null })
+  if (error || !data) return error?.message ?? 'erro'
+  const c = data as DadosCertificado
+  const { jsPDF } = await import('jspdf')
+  const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'landscape' })
+  const L = pdf.internal.pageSize.getWidth(), A = pdf.internal.pageSize.getHeight()
+  pdf.setDrawColor(0, 98, 196); pdf.setLineWidth(3); pdf.rect(28, 28, L - 56, A - 56)
+  pdf.setLineWidth(0.8); pdf.rect(38, 38, L - 76, A - 76)
+  const centro = (texto: string, y: number, tamanho: number, estilo: 'normal' | 'bold' = 'normal') => {
+    pdf.setFont('helvetica', estilo); pdf.setFontSize(tamanho)
+    for (const [i, linha] of (pdf.splitTextToSize(texto, L - 160) as string[]).entries()) pdf.text(linha, L / 2, y + i * tamanho * 1.3, { align: 'center' })
+  }
+  pdf.setTextColor(0, 98, 196); centro('CERTIFICADO', 110, 30, 'bold')
+  pdf.setTextColor(40, 40, 40)
+  centro(c.empresa, 140, 13)
+  centro('Certificamos que', 195, 13)
+  centro(c.nome, 228, 24, 'bold')
+  centro(`concluiu o treinamento “${c.treinamento}” (versão ${c.versao}) e foi aprovado na avaliação com nota ${Number(c.nota).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} (mínimo ${c.nota_minima}).`, 268, 14)
+  const etapas = c.etapas?.length ?? 0
+  centro(`Tempo de estudo registrado: ${duracao(c.segundos)} · ${etapas} ${etapas === 1 ? 'etapa' : 'etapas'} de conteúdo`, 330, 11)
+  centro(`Aprovado em ${dataCurta(c.aprovado_em)}${c.valido_ate ? ` · válido até ${dataCurta(c.valido_ate)}` : ''}`, 350, 11)
+  pdf.setFontSize(8); pdf.setTextColor(110, 110, 115)
+  centro(`Código de verificação: ${c.codigo ?? '—'}${c.tentativa_id ? ` · registro ${c.tentativa_id}` : ''}`, A - 70, 8)
+  centro('O tempo de estudo foi medido pelo sistema (só conta com a tela aberta e com confirmação de presença).', A - 58, 8)
+  // link próprio na página (o atalho do jsPDF perde o nome do arquivo em alguns navegadores)
+  const url = URL.createObjectURL(pdf.output('blob'))
+  const a = document.createElement('a')
+  a.href = url
+  const simples = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '_')
+  a.download = `certificado_${simples(c.treinamento)}_${simples(c.nome)}.pdf`
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  return null
+}

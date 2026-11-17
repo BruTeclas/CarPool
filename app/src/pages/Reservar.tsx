@@ -16,7 +16,7 @@ type Livre = { veiculo_id: string; placa: string; modelo: string }
 type Horario = { inicio: string; fim: string }
 type Pendente = { id: string; nome: string; versao: number; config: Record<string, number | boolean> }
 type Mensagem = { texto: string; erro: boolean; link?: boolean }
-type Pendencias = { termos: { id: string; titulo: string; versao: number; texto: string }[]; documentos: string[]; cnh: boolean; comunicados?: { id: string; titulo: string }[] }
+type Pendencias = { termos: { id: string; titulo: string; versao: number; texto: string }[]; documentos: string[]; cnh: boolean; comunicados?: { id: string; titulo: string }[]; treinamentos?: { id: string; titulo: string; vencido: boolean }[] }
 
 function regras(c: Pendente['config']): string[] {
   return [
@@ -199,6 +199,19 @@ export default function Reservar() {
               {ocupado ? 'Registrando…' : 'Assinar o termo'}
             </button>
           </p>
+        </section>
+      </main>
+    )
+  }
+  if (pendencias?.treinamentos?.length) {
+    return (
+      <main>
+        <h1>Reservar veículo</h1>
+        <section className="cartao" aria-label="Treinamentos pendentes">
+          <h2>Falta treinamento para liberar suas reservas</h2>
+          <p>O prazo terminou e a empresa exige estes treinamentos:</p>
+          <ul>{pendencias.treinamentos.map((t) => <li key={t.id}>{t.titulo}{t.vencido ? ' (a aprovação venceu: refaça)' : ''}</li>)}</ul>
+          <p><Link className="botao" to={`/meus-treinamentos/${pendencias.treinamentos[0].id}`}>Fazer o treinamento</Link></p>
         </section>
       </main>
     )

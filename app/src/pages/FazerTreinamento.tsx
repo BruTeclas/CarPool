@@ -4,7 +4,7 @@ import { LeitorPdf } from '../components/LeitorPdf'
 import { avisarMudanca } from '../lib/avisos'
 import { mensagemDeErro } from '../lib/erros'
 import { supabase } from '../lib/supabase'
-import { carregarYoutube, duracao, relogio, SITUACAO_DA_TENTATIVA, TIPOS_DE_ETAPA, urlDoArquivo } from '../lib/treinamentos'
+import { baixarCertificado, carregarYoutube, duracao, relogio, SITUACAO_DA_TENTATIVA, TIPOS_DE_ETAPA, urlDoArquivo } from '../lib/treinamentos'
 import type { Conteudo, EtapaDoColaborador, TentativaAberta, YTPlayer } from '../lib/treinamentos'
 
 const INTERVALO_SINAL_MS = 5000
@@ -424,7 +424,8 @@ export default function FazerTreinamento() {
         <div>
           {naProva ? (
             aprovado ? (
-              <section className="cartao" role="status"><h2>Você foi aprovado</h2><p>Nota {Number(m.nota).toLocaleString('pt-BR')}.{m.valido_ate && ` Válido até ${new Date(m.valido_ate).toLocaleDateString('pt-BR')}.`}</p></section>
+              <section className="cartao" role="status"><h2>Você foi aprovado</h2><p>Nota {Number(m.nota).toLocaleString('pt-BR')}.{m.valido_ate && ` Válido até ${new Date(m.valido_ate).toLocaleDateString('pt-BR')}.`}</p>
+                <div className="acoes"><button type="button" onClick={() => void baixarCertificado(t.id)}>Baixar certificado</button></div></section>
             ) : aguardando ? (
               <section className="cartao" role="status"><h2>Prova em correção</h2><p>O gestor está corrigindo suas respostas escritas. Você recebe a nota em Avisos.</p></section>
             ) : podeProva ? (
