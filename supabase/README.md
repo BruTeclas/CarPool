@@ -55,8 +55,17 @@ Buckets `vistorias` e `documentos` são privados, com limite de tamanho (5 e 10 
 - `acompanhamento_treinamento` (gestor) e `certificado_treinamento` (a pessoa ou o gestor). Rotina `carpool-treinamentos` (diária, 11:17 UTC) avisa prazos (7, 1, 0 dias) e reciclagem (30, 7, 1 dia).
 - Teste: `tests/treinamentos_obrigatorios.sql`.
 
+## Super admin (Sprint 9)
+- `super_admins`: quem administra o sistema. `app.eh_super_admin()`; as funções `super_*` conferem isso antes de tudo.
+- `empresas` ganhou `cnpj` (conferido por `app.cnpj_valido`), `razao_social`, `situacao`/`motivo_suspensao`, `limite_*` e `modulos`. O admin do cliente não altera esses campos (gatilho `empresas_campos_do_super`).
+- Módulos: `app.modulo_ativo`/`app.exigir_modulo`; desligado, relatórios recusam, ocorrência/treinamento/comunicado/documento/termo não são criados e as travas de reserva do módulo deixam de valer.
+- Plano e suspensão: gatilho `app.conferir_empresa_e_plano` em membros, veículos, filiais, bases e reservas (`reservas_0_empresa_ativa` roda antes das outras travas).
+- Suporte: `super_entrar_como` cria um vínculo de admin com `suporte_ate` (2 h) e `suporte_motivo`; `empresas_do_usuario`/`tem_perfil` ignoram vínculo vencido e a rotina `carpool-suporte` apaga os vencidos a cada 5 min.
+- Convite: função `convidar-admin` (só super admin) convida por e-mail e vincula via `super_vincular_admin`.
+- Teste: `tests/super_admin.sql`.
+
 ## Primeiro usuário em produção
-O banco não tem usuários de teste. Para liberar o primeiro acesso:
+O banco não tem usuários de teste. O primeiro acesso é o de super admin: crie o usuário em Authentication → Users e rode `insert into public.super_admins (user_id, nome) select id, 'Nome' from auth.users where email = '<email>';`. Daí em diante, empresas e admins são criados pelo painel `/super`. Caminho antigo, só para referência:
 1. Crie o usuário em Authentication → Users (marque "Auto Confirm User").
 2. No SQL Editor, crie a empresa e o vínculo de administrador:
 ```sql

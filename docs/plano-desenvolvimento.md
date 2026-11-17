@@ -172,6 +172,19 @@ Decisões confirmadas: documentos do veículo entram junto; documento enviado pe
 
 **Situação (17/11/2026):** concluído. Banco testado em `supabase/tests/comunicados.sql`, `treinamentos.sql` e `treinamentos_obrigatorios.sql`; telas testadas no navegador, no computador e no celular, com verificação de acessibilidade. Falta testar o vídeo do YouTube e o push no site publicado.
 
+### Sprint 9 · Super admin (dono do sistema)
+*Combinado em 17/11/2026.*
+
+- [x] Super admin separado do admin do cliente: painel próprio em `/super`, vários super admins, tudo registrado.
+- [x] Cadastro de empresas com CNPJ conferido (dígitos e duplicidade), razão social e nome.
+- [x] Módulos por empresa: treinamentos e comunicados, relatórios e central, documentos e termos, ocorrências. Desligado some do menu e as regras deixam de valer (inclusive no banco). Reserva, vistoria e chave sempre ligados.
+- [x] Limites do plano (usuários, veículos, filiais), conferidos no banco.
+- [x] Suspensão com motivo: sem reservas, retiradas e cadastros; devolver continua possível.
+- [x] Convite do primeiro admin por e-mail (função `convidar-admin`) e tela "Crie sua senha"; "Esqueci minha senha" na entrada.
+- [x] Painel de uso: usuários, veículos, filiais, reservas em 30 dias e último acesso por empresa.
+- [x] Suporte: "entrar como" admin por 2 horas, com motivo obrigatório, registrado na auditoria, sem contar como admin nem entrar nos públicos.
+- [ ] Testar o convite com um e-mail de verdade depois de configurar a URL do site no Supabase.
+
 ### Pendente para depois · Envio de e-mail e push
 *Combinado em 16/11/2026: fazer só quando os outros pontos estiverem terminados.*
 
