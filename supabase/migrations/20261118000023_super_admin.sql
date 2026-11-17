@@ -159,21 +159,32 @@ as $$ delete from public.membros where user_id = (select auth.uid()) and suporte
 create or replace function app.conferir_empresa_e_plano()
 returns trigger language plpgsql security definer set search_path = ''
 as $$
-declare v_e public.empresas; v_qtd int;
+declare v_e public.empresas; v_qtd int; v_suspende boolean := false;
 begin
+  -- cada tabela tem campos diferentes: as conferências ficam separadas por tabela
+  if tg_table_name = 'membros' then
+    if new.suporte_ate is not null then return new; end if;  -- o suporte entra mesmo em empresa suspensa
+  end if;
   select * into v_e from public.empresas where id = new.empresa_id;
-  if tg_table_name = 'membros' and new.suporte_ate is not null then return new; end if;  -- o suporte entra mesmo em empresa suspensa
 
-  if v_e.situacao = 'suspensa' and (tg_op = 'INSERT' or (tg_table_name = 'reservas' and new.status in ('liberada', 'em_uso'))
-                                   or (tg_table_name = 'membros' and new.ativo and not old.ativo)) then
-    raise exception 'empresa_suspensa' using errcode = 'P0001';
+  if v_e.situacao = 'suspensa' then
+    if tg_op = 'INSERT' then
+      v_suspende := true;
+    elsif tg_table_name = 'reservas' then
+      v_suspende := new.status in ('liberada', 'em_uso') and new.status is distinct from old.status;
+    elsif tg_table_name = 'membros' then
+      v_suspende := new.ativo and not old.ativo;
+    end if;
+    if v_suspende then raise exception 'empresa_suspensa' using errcode = 'P0001'; end if;
   end if;
 
-  if tg_table_name = 'membros' and new.ativo and (tg_op = 'INSERT' or not old.ativo) and v_e.limite_usuarios is not null
-     and not exists (select 1 from public.membros m where m.empresa_id = new.empresa_id and m.user_id = new.user_id and m.ativo
-                     and m.suporte_ate is null and m.id is distinct from new.id) then
-    select count(distinct m.user_id) into v_qtd from public.membros m where m.empresa_id = new.empresa_id and m.ativo and m.suporte_ate is null;
-    if v_qtd >= v_e.limite_usuarios then raise exception 'limite_do_plano: usuarios' using errcode = 'P0001'; end if;
+  if tg_table_name = 'membros' then
+    if new.ativo and (tg_op = 'INSERT' or not old.ativo) and v_e.limite_usuarios is not null
+       and not exists (select 1 from public.membros m where m.empresa_id = new.empresa_id and m.user_id = new.user_id and m.ativo
+                       and m.suporte_ate is null and m.id is distinct from new.id) then
+      select count(distinct m.user_id) into v_qtd from public.membros m where m.empresa_id = new.empresa_id and m.ativo and m.suporte_ate is null;
+      if v_qtd >= v_e.limite_usuarios then raise exception 'limite_do_plano: usuarios' using errcode = 'P0001'; end if;
+    end if;
   elsif tg_table_name = 'veiculos' and tg_op = 'INSERT' and v_e.limite_veiculos is not null then
     select count(*) into v_qtd from public.veiculos where empresa_id = new.empresa_id;
     if v_qtd >= v_e.limite_veiculos then raise exception 'limite_do_plano: veiculos' using errcode = 'P0001'; end if;
@@ -192,7 +203,8 @@ create trigger unidades_empresa_e_plano before insert on public.unidades
   for each row execute function app.conferir_empresa_e_plano();
 create trigger bases_empresa_ativa before insert on public.bases
   for each row execute function app.conferir_empresa_e_plano();
-create trigger reservas_empresa_ativa before insert or update of status on public.reservas
+-- o "0" no nome faz esta conferência rodar antes das outras da reserva (a mensagem certa é a da suspensão)
+create trigger reservas_0_empresa_ativa before insert or update of status on public.reservas
   for each row execute function app.conferir_empresa_e_plano();
 
 -- ---------------------------------------------------------------- módulos: desligado, as regras dele deixam de valer
